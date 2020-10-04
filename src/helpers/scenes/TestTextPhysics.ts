@@ -7,7 +7,7 @@ import { createPhysicBox } from '~/utils/physics'
 import { Body, Fixture, Vec2, World } from '~/vendor/Box2D/Box2D'
 import TestPhysicsScene from './TestPhysics'
 
-const SCALE = (1)
+const SCALE = 10
 
 export default class TestTextPhysicsScene extends TestPhysicsScene {
   constructor() {
@@ -54,14 +54,17 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
 export function textToPhysicsBodies(mesh:TextMesh, world:World){
   if (mesh.geometry instanceof BufferGeometry) {
     const verts = mesh.geometry.attributes.position.array
-    const leap = 3*4
+    const leap = mesh.geometry.attributes.position.itemSize*4
 
     for(var i = 0; i < verts.length; i+=leap) {
-
-        var bx:number = (verts[i+0] + verts[i+3])/2
-        var by:number = (verts[i+1] + verts[i+7])/2
-        var bwidth:number = (verts[i+3] - verts[i+0])
-        var bheight:number = (verts[i+1] - verts[i+7])
+        const l = verts[i+0]
+        const r = verts[i+4]
+        const t = verts[i+1]
+        const b = verts[i+3]
+        var bx:number = (l+r)/2
+        var by:number = (t+b)/2
+        var bwidth:number = r-l
+        var bheight:number = t-b
 
         createPhysicBox(world, bx * SCALE, by * SCALE, bwidth * SCALE, bheight * SCALE)
     }
