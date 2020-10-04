@@ -18,6 +18,8 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
       fps.toggle(true)
     }
 
+    let lastKnownTextBodies:Body[] | undefined
+
     const s = 10
 
     const testCode = new TextMesh(
@@ -31,7 +33,8 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
         '* never gonna say goodbye. Never gonna tell a lie and hurt you.',
         '*/'
       ].join('\n'),
-      textSettings.code
+      textSettings.code, undefined, undefined, 
+      
     )
     testCode.scale.multiplyScalar(s)
     testCode.position.x -= 2
