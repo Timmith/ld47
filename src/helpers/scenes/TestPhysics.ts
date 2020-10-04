@@ -31,7 +31,7 @@ export default class TestPhysicsScene extends BaseTestScene {
       this.circleBodies.push(circleBody)
     }
 
-    const testTextMesh = new TextMesh("G")
+    const testTextMesh = new TextMesh('G')
 
     testTextMesh.geometry.boundingBox.max.x
     testTextMesh.geometry.boundingBox.max.y
@@ -42,17 +42,13 @@ export default class TestPhysicsScene extends BaseTestScene {
       createPhysicBox(this.myB2World, i - 5, -0.3, 0.5, 0.1)
     }
 
-
-/*     if (testBox) {
+    /*     if (testBox) {
       createPhysicBox(this.myB2World, 0, -0.3, 1, 0.1)
       createPhysicBox(this.myB2World, 0.2, 0.3, 1, 0.1)
       const ramp = createPhysicBox(this.myB2World, 0.8, 0, 1, 0.1)
       ramp.SetAngle(Math.PI * 0.25)
     } */
-
   }
-
-
 
   update(dt: number) {
     super.update(dt)
@@ -66,12 +62,10 @@ export default class TestPhysicsScene extends BaseTestScene {
         circleBody.SetPositionXY(rand(-1, 1), 1 + rand(-0.2, 0.2))
       }
     }
-
   }
   render(renderer: WebGLRenderer, dt: number) {
     super.render(renderer, dt)
   }
-  
 }
 
 /* export function textToPhysicsBodies(mesh:TextMesh):Body[]{

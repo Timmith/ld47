@@ -1,13 +1,14 @@
 import { BufferGeometry, PerspectiveCamera, WebGLRenderer } from 'three'
+import { __pixelSizeMeters } from '~/settings/physics'
+import { fontFaces } from '~/text/FontFace'
 import TextMesh from '~/text/TextMesh'
 import { textSettings } from '~/text/TextSettings'
 import { FPSControls } from '~/utils/fpsControls'
 import { getUrlFlag } from '~/utils/location'
-import { __pixelSizeMeters } from '~/settings/physics'
 import { createPhysicBox } from '~/utils/physics'
 import { Body, Fixture, Vec2, World } from '~/vendor/Box2D/Box2D'
+
 import TestPhysicsScene from './TestPhysics'
-import { fontFaces } from '~/text/FontFace'
 
 const SCALE = 10
 
@@ -19,7 +20,7 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
       fps.toggle(true)
     }
 
-    let lastKnownTextBodies:Body[] | undefined
+    let lastKnownTextBodies: Body[] | undefined
 
     const s = 10
 
@@ -34,26 +35,27 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
         '* never gonna say goodbye. Never gonna tell a lie and hurt you.',
         '*/'
       ].join('\n'),
-      textSettings.code, undefined, undefined, 
-      
+      textSettings.code,
+      undefined,
+      undefined
     )
     testCode.scale.multiplyScalar(s)
     testCode.position.x -= 2
     this.scene.add(testCode)
 
     testCode.onMeasurementsUpdated = () => {
-        if(lastKnownTextBodies) {
-            for (const body of lastKnownTextBodies) {
-                this.myB2World.DestroyBody(body)
-            }
-            lastKnownTextBodies = undefined
+      if (lastKnownTextBodies) {
+        for (const body of lastKnownTextBodies) {
+          this.myB2World.DestroyBody(body)
         }
-        lastKnownTextBodies = textToPhysicsBodies(testCode, this.myB2World)
+        lastKnownTextBodies = undefined
+      }
+      lastKnownTextBodies = textToPhysicsBodies(testCode, this.myB2World)
     }
 
     setTimeout(() => {
-        testCode.settings.fontFace = fontFaces.GothicA1Black 
-    }, 2000);
+      testCode.settings.fontFace = fontFaces.GothicA1Black
+    }, 2000)
 
     const init = async () => {
       //
@@ -68,24 +70,30 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
   }
 }
 
-export function textToPhysicsBodies(mesh:TextMesh, world:World){
-  const bodies:Body[] = []
+export function textToPhysicsBodies(mesh: TextMesh, world: World) {
+  const bodies: Body[] = []
   if (mesh.geometry instanceof BufferGeometry) {
     const verts = mesh.geometry.attributes.position.array
-    const leap = mesh.geometry.attributes.position.itemSize*4
+    const leap = mesh.geometry.attributes.position.itemSize * 4
     const pos = mesh.position
-    for(var i = 0; i < verts.length; i+=leap) {
-        const l = verts[i+0]
-        const r = verts[i+4]
-        const t = verts[i+1]
-        const b = verts[i+3]
-        var bx:number = (l+r)/2 +pos.x * __pixelSizeMeters
-        var by:number = (t+b)/2 +pos.y * __pixelSizeMeters
-        var bwidth:number = r-l
-        var bheight:number = t-b
+    for (let i = 0; i < verts.length; i += leap) {
+      const l = verts[i + 0]
+      const r = verts[i + 4]
+      const t = verts[i + 1]
+      const b = verts[i + 3]
+      let bx: number = (l + r) / 2 + pos.x * __pixelSizeMeters
+      let by: number = (t + b) / 2 + pos.y * __pixelSizeMeters
+      let bwidth: number = r - l
+      let bheight: number = t - b
 
-        const body = createPhysicBox(world, bx * SCALE, by * SCALE, bwidth * SCALE, bheight * SCALE)
-        bodies.push(body)
+      const body = createPhysicBox(
+        world,
+        bx * SCALE,
+        by * SCALE,
+        bwidth * SCALE,
+        bheight * SCALE
+      )
+      bodies.push(body)
     }
   }
   return bodies
