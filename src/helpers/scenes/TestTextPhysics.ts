@@ -40,7 +40,15 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
     testCode.position.x -= 2
     this.scene.add(testCode)
 
-    testCode.onMeasurementsUpdated = () => textToPhysicsBodies(testCode, this.myB2World)
+    testCode.onMeasurementsUpdated = () => {
+        if(lastKnownTextBodies) {
+            for (const body of lastKnownTextBodies) {
+                //
+            }
+            lastKnownTextBodies = undefined
+        }
+        textToPhysicsBodies(testCode, this.myB2World)
+    }
 
     const init = async () => {
       //
