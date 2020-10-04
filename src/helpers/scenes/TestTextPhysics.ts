@@ -7,6 +7,7 @@ import { __pixelSizeMeters } from '~/settings/physics'
 import { createPhysicBox } from '~/utils/physics'
 import { Body, Fixture, Vec2, World } from '~/vendor/Box2D/Box2D'
 import TestPhysicsScene from './TestPhysics'
+import { fontFaces } from '~/text/FontFace'
 
 const SCALE = 10
 
@@ -43,12 +44,16 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
     testCode.onMeasurementsUpdated = () => {
         if(lastKnownTextBodies) {
             for (const body of lastKnownTextBodies) {
-                //
+                this.myB2World.DestroyBody(body)
             }
             lastKnownTextBodies = undefined
         }
         textToPhysicsBodies(testCode, this.myB2World)
     }
+
+    setTimeout(() => {
+        testCode.settings.fontFace = fontFaces.GothicA1Black 
+    }, 2000);
 
     const init = async () => {
       //
