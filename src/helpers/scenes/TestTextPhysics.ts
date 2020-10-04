@@ -37,7 +37,7 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
     testCode.position.x -= 2
     this.scene.add(testCode)
 
-    setTimeout(()=> textToPhysicsBodies(testCode, this.myB2World), 1000)
+    testCode.onMeasurementsUpdated = () => textToPhysicsBodies(testCode, this.myB2World)
 
     const init = async () => {
       //
