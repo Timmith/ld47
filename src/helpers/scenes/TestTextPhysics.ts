@@ -48,7 +48,7 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
             }
             lastKnownTextBodies = undefined
         }
-        textToPhysicsBodies(testCode, this.myB2World)
+        lastKnownTextBodies = textToPhysicsBodies(testCode, this.myB2World)
     }
 
     setTimeout(() => {
@@ -69,6 +69,7 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
 }
 
 export function textToPhysicsBodies(mesh:TextMesh, world:World){
+  const bodies:Body[] = []
   if (mesh.geometry instanceof BufferGeometry) {
     const verts = mesh.geometry.attributes.position.array
     const leap = mesh.geometry.attributes.position.itemSize*4
@@ -83,7 +84,9 @@ export function textToPhysicsBodies(mesh:TextMesh, world:World){
         var bwidth:number = r-l
         var bheight:number = t-b
 
-        createPhysicBox(world, bx * SCALE, by * SCALE, bwidth * SCALE, bheight * SCALE)
+        const body = createPhysicBox(world, bx * SCALE, by * SCALE, bwidth * SCALE, bheight * SCALE)
+        bodies.push(body)
     }
   }
+  return bodies
 }
