@@ -3,6 +3,7 @@ import TextMesh from '~/text/TextMesh'
 import { textSettings } from '~/text/TextSettings'
 import { FPSControls } from '~/utils/fpsControls'
 import { getUrlFlag } from '~/utils/location'
+import { __pixelSizeMeters } from '~/settings/physics'
 import { createPhysicBox } from '~/utils/physics'
 import { Body, Fixture, Vec2, World } from '~/vendor/Box2D/Box2D'
 import TestPhysicsScene from './TestPhysics'
@@ -55,14 +56,14 @@ export function textToPhysicsBodies(mesh:TextMesh, world:World){
   if (mesh.geometry instanceof BufferGeometry) {
     const verts = mesh.geometry.attributes.position.array
     const leap = mesh.geometry.attributes.position.itemSize*4
-
+    const pos = mesh.position
     for(var i = 0; i < verts.length; i+=leap) {
         const l = verts[i+0]
         const r = verts[i+4]
         const t = verts[i+1]
         const b = verts[i+3]
-        var bx:number = (l+r)/2
-        var by:number = (t+b)/2
+        var bx:number = (l+r)/2 +pos.x * __pixelSizeMeters
+        var by:number = (t+b)/2 +pos.y * __pixelSizeMeters
         var bwidth:number = r-l
         var bheight:number = t-b
 
