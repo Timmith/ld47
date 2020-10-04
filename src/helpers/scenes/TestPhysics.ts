@@ -1,6 +1,5 @@
 import { WebGLRenderer } from 'three'
 import { Box2DPreviewMesh } from '~/meshes/Box2DPreviewMesh'
-import TextMesh from '~/text/TextMesh'
 import { rand } from '~/utils/math'
 import { createPhysicBox, createPhysicsCircle } from '~/utils/physics'
 import { Body, Vec2, World } from '~/vendor/Box2D/Box2D'
@@ -31,30 +30,17 @@ export default class TestPhysicsScene extends BaseTestScene {
       this.circleBodies.push(circleBody)
     }
 
-    const testTextMesh = new TextMesh('G')
-
-    testTextMesh.geometry.boundingBox.max.x
-    testTextMesh.geometry.boundingBox.max.y
-    testTextMesh.geometry.boundingBox.min.x
-    testTextMesh.geometry.boundingBox.min.y
-
-    for (let i = 0; i < 10; i++) {
-      createPhysicBox(this.myB2World, i - 5, -0.3, 0.5, 0.1)
-    }
-
-    /*     if (testBox) {
+    if (testBox) {
       createPhysicBox(this.myB2World, 0, -0.3, 1, 0.1)
       createPhysicBox(this.myB2World, 0.2, 0.3, 1, 0.1)
       const ramp = createPhysicBox(this.myB2World, 0.8, 0, 1, 0.1)
       ramp.SetAngle(Math.PI * 0.25)
-    } */
+    }
   }
-
   update(dt: number) {
     super.update(dt)
     this.myB2World.Step(dt, 10, 4)
     this.b2Preview.update(dt)
-
     for (const circleBody of this.circleBodies) {
       const p = circleBody.GetPosition()
       if (p.y < -1) {
@@ -67,27 +53,3 @@ export default class TestPhysicsScene extends BaseTestScene {
     super.render(renderer, dt)
   }
 }
-
-/* export function textToPhysicsBodies(mesh:TextMesh):Body[]{
-  private verts = mesh.geometry.boundingBox.min.x
-  
-
-
-  new private verts:Array
-
-  mesh.geometry.vertices.array
-  bodies = []
-  leap = 3*4
-  for(var i = 0; i < verts.length; i+=leap) {
-    body = new body()
-    fixture = new fixture()
-    verts2d = []
-    for(var j = 0; j < leap; i+=3) {
-      verts2d.push(new vec2(verts[i+j], verts2[i+j+1]))
-    }
-    fixture.setpoly(verts2d)
-    body.addfixture(fixture)
-    bodies.push(body)
-  }
-  return bodies
-} */

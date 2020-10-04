@@ -81,10 +81,10 @@ export function textToPhysicsBodies(mesh: TextMesh, world: World) {
       const r = verts[i + 4]
       const t = verts[i + 1]
       const b = verts[i + 3]
-      let bx: number = (l + r) / 2 + pos.x * __pixelSizeMeters
-      let by: number = (t + b) / 2 + pos.y * __pixelSizeMeters
-      let bwidth: number = r - l
-      let bheight: number = t - b
+      const bx: number = (l + r) / 2 + pos.x * __pixelSizeMeters
+      const by: number = (t + b) / 2 + pos.y * __pixelSizeMeters
+      const bwidth: number = r - l
+      const bheight: number = t - b
 
       const body = createPhysicBox(
         world,
