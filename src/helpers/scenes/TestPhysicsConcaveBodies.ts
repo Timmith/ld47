@@ -22,12 +22,12 @@ export default class TestConcaveBodiesScene extends TestPhysicsScene {
     debugPolygonPhysics.value = true
 
     for (let i = 0; i < 10; i++) {
-      createPhysicBox(this.myB2World, i - 5, -0.3, 0.5, 0.1)
+      createPhysicBox(this.sim.world, i - 5, -0.3, 0.5, 0.1)
     }
 
     const wobblyCircleVerts = makeWobblyCircleShapePath(0.1, 0.25, 40, 6)
     makePolygonPhysics(
-      this.myB2World,
+      this.sim.world,
       wobblyCircleVerts,
       BodyType.staticBody,
       new Vector2(-0.5, 0),
@@ -37,7 +37,7 @@ export default class TestConcaveBodiesScene extends TestPhysicsScene {
     const testShape = makeWobblyCircleShapePath(0.2, 0.125, 12, 3, 0.25)
     const pos = new Vector2(-1, 0)
     makePolygonPhysics(
-      this.myB2World,
+      this.sim.world,
       testShape,
       BodyType.staticBody,
       pos,

@@ -14,14 +14,14 @@ export default class TestCharacterControlOnTextScene extends TestPhysicsScene {
     debugPolygonPhysics.value = true
 
     for (let i = 0; i < 10; i++) {
-      createPhysicBox(this.myB2World, i - 5, -0.3, 0.5, 0.1)
+      createPhysicBox(this.sim.world, i - 5, -0.3, 0.5, 0.1)
     }
 
     this._postUpdate = startControllableCharacters(
-      this.myB2World,
+      this.sim.world,
       this.b2Preview
     )
-    runTextPhysicsTest(this.scene, this.myB2World)
+    runTextPhysicsTest(this.scene, this.sim.world)
   }
 
   update(dt: number) {

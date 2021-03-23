@@ -13,10 +13,10 @@ export default class TestGraphicsCharacterScene extends TestGraphicsLevelScene {
   constructor() {
     super('test-layout')
     const acl = new AvatarContactListener()
-    this.myB2World.SetContactListener(acl)
+    this.sim.world.SetContactListener(acl)
     for (let i = 0; i < getUrlInt('characters', 1, 1, 4); i++) {
       const c = new CharacterKeyboardController(getKeyboardInput())
-      const character = new Character(this.myB2World, '', acl, c)
+      const character = new Character(this.sim.world, '', acl, c)
       this.characters.push(character)
       this.scene.add(character.visuals)
     }

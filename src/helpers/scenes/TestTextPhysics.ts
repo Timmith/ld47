@@ -18,7 +18,7 @@ export default class TestTextPhysicsScene extends TestPhysicsScene {
       fps.toggle(true)
     }
 
-    const testCode = runTextPhysicsTest(this.scene, this.myB2World)
+    const testCode = runTextPhysicsTest(this.scene, this.sim.world)
 
     setTimeout(() => {
       testCode.settings.fontFace = fontFaces.GothicA1Black

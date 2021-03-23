@@ -288,7 +288,8 @@ export function textToPhysicsBodies(mesh: TextMesh, world: World) {
       const r = verts[i + 4]
       const t = verts[i + 1]
       const b = verts[i + 3]
-      const bx: number = (l + r) / 2 + pos.x * __pixelSizeMeters + HORIZONTAL_TRANSLATION
+      const bx: number =
+        (l + r) / 2 + pos.x * __pixelSizeMeters + HORIZONTAL_TRANSLATION
       const by: number = (t + b) / 2 + pos.y * __pixelSizeMeters
       const bwidth: number = r - l
       const bheight: number = t - b

@@ -13,15 +13,15 @@ export default class TestPhysicsCharacterScene extends TestPhysicsPNGScene {
       console.log('level ready')
     })
     const acl = new AvatarContactListener()
-    this.myB2World.SetContactListener(acl)
+    this.sim.world.SetContactListener(acl)
     const c = new CharacterKeyboardController(getKeyboardInput())
-    this.character = new PhysicsCharacter(this.myB2World, acl, c)
+    this.character = new PhysicsCharacter(this.sim.world, acl, c)
   }
   update(dt: number) {
     const char = this.character
     const pos = char.avatarBody.GetPosition()
     this.b2Preview.offset.Set(pos.x / device.aspect, pos.y)
     super.update(dt) //does actual physics
-    char.postPhysicsUpdate()
+    char.postPhysicsUpdate(dt)
   }
 }

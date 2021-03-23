@@ -13,7 +13,7 @@ export default class TestPhysicsPNGScene extends TestPhysicsScene {
     super(false, totalBalls)
     new PNGLevel(
       getUrlParam('level') || defaultLevel,
-      createPhysicBoxFromPixels.bind(this, this.myB2World),
+      createPhysicBoxFromPixels.bind(this, this.sim.world),
       onLevelReady
     )
   }
