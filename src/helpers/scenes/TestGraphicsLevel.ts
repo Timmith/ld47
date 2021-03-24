@@ -15,10 +15,11 @@ import { nowInSeconds } from '~/utils/performance'
 import ProceduralKeyboardMesh from '../../meshes/ProceduralKeyboardMesh'
 
 import TestLightingScene from './TestLighting'
+import BasicBalls from '~/physics/tests/BasicBalls'
 
 export default class TestGraphicsLevelScene extends TestLightingScene {
   protected b2Preview: Box2DPreviewMesh | undefined
-  protected sim = getSimulator(nowInSeconds)
+  protected sim = getSimulator(nowInSeconds, new BasicBalls())
   protected keyboardInput: KeyboardInput
   protected keyboardMesh: ProceduralKeyboardMesh
   protected checkpointBodies: Fixture[] = []

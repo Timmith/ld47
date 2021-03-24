@@ -1,7 +1,6 @@
 import { Vector2 } from 'three'
 import ICharacterController from '~/controllers/ICharacterController'
 import { removeFromArray } from '~/utils/arrayUtils'
-import { createPhysicBox, makeBitMask } from '~/utils/physics'
 import { taskTimer } from '~/utils/taskTimer'
 import {
   Body,
@@ -17,6 +16,8 @@ import {
 } from '~/vendor/Box2D/Box2D'
 
 import AvatarContactListener from './AvatarContactListener'
+import { createPhysicBox } from './bodyHelpers'
+import { makeBitMask } from './maskBits'
 
 const __rcOut = new RayCastOutput()
 const __rcIn = new RayCastInput()

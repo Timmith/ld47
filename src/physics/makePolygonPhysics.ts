@@ -1,9 +1,5 @@
 import { Vector2 } from 'three'
-import {
-  createPhysicBox,
-  deconstructConcavePath,
-  makeBitMask
-} from '~/utils/physics'
+import { deconstructConcavePath } from '~/utils/physics'
 import {
   BodyDef,
   BodyType,
@@ -11,6 +7,9 @@ import {
   PolygonShape,
   World
 } from '~/vendor/Box2D/Box2D'
+
+import { createPhysicBox } from './bodyHelpers'
+import { makeBitMask } from './maskBits'
 
 const __origin = new Vector2()
 export default function makePolygonPhysics(

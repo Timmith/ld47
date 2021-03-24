@@ -9,7 +9,7 @@ import TestPhysicsPNGScene from './TestPhysicsPNG'
 export default class TestPhysicsCharacterScene extends TestPhysicsPNGScene {
   private character: PhysicsCharacter
   constructor() {
-    super('test-run', 0, () => {
+    super('test-run', () => {
       console.log('level ready')
     })
     const acl = new AvatarContactListener()

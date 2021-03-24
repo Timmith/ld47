@@ -7,10 +7,9 @@ import TestPhysicsScene from './TestPhysics'
 export default class TestPhysicsPNGScene extends TestPhysicsScene {
   constructor(
     defaultLevel = 'test',
-    totalBalls = 20,
     onLevelReady: () => void
   ) {
-    super(false, totalBalls)
+    super()
     new PNGLevel(
       getUrlParam('level') || defaultLevel,
       createPhysicBoxFromPixels.bind(this, this.sim.world),

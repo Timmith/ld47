@@ -1,12 +1,13 @@
 import { getSimulator } from "./helpers/physics/simulator";
 
 import { performance }  from 'perf_hooks';
+import BasicBalls from "~/physics/tests/BasicBalls";
 
 function nowInSeconds() {
     return performance.now() * 0.001
 }
 
-const sim = getSimulator(nowInSeconds)
+const sim = getSimulator(nowInSeconds, new BasicBalls())
 const dtMs = 100
 
 setInterval(function tick() {

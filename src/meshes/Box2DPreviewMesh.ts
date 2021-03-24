@@ -11,7 +11,7 @@ import {
 import device from '~/device'
 import { Box2DPreviewMaterial } from '~/materials/Box2DPreviewMaterial'
 import { getUrlFlag } from '~/utils/location'
-import { rand2 } from '~/utils/math'
+import { detRandGraphics } from '~/utils/random'
 import {
   Body,
   CircleShape,
@@ -37,6 +37,8 @@ const __defaultColorScale = new Vector3(0.5, 0.5, 0.5)
 export const debugPolygonPhysics = {
   value: getUrlFlag('debugPhysicsPolygon')
 }
+
+const rand = detRandGraphics
 class DebugColors {
   fixtureColors: Map<Fixture, Vector3>
   bodyMatrices: Map<Body, Matrix4>
@@ -46,7 +48,7 @@ class DebugColors {
   }
   getFixtureColor(fixture: Fixture): Vector3 {
     if (!this.fixtureColors.has(fixture)) {
-      const color = new Vector3(rand2(), rand2(), rand2())
+      const color = new Vector3(rand(), rand(), rand())
         .applyMatrix4(this.getBodyMatrix(fixture.m_body))
         .applyMatrix4(__colorMatrixVisible)
       this.fixtureColors.set(fixture, color)
@@ -57,7 +59,7 @@ class DebugColors {
   getBodyMatrix(body: Body): Matrix4 {
     if (!this.bodyMatrices.has(body)) {
       const matrix = new Matrix4().compose(
-        new Vector3(rand2(), rand2(), rand2()),
+        new Vector3(rand(), rand(), rand()),
         __defaultQuaternion,
         __defaultColorScale
       )

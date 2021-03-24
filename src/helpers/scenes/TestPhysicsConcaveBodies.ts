@@ -4,11 +4,11 @@ import { debugPolygonPhysics } from '~/meshes/Box2DPreviewMesh'
 import makePolygonPhysics from '~/physics/makePolygonPhysics'
 import PhysicsCharacter from '~/physics/PhysicsCharacter'
 import {
-  createPhysicBox,
   deconstructConcavePath2,
   deconstructConcavePath3
 } from '~/utils/physics'
 import { BodyType } from '~/vendor/Box2D/Box2D'
+import { createPhysicBox } from '~/physics/bodyHelpers'
 
 import TestPhysicsScene from './TestPhysics'
 
@@ -16,7 +16,7 @@ export default class TestConcaveBodiesScene extends TestPhysicsScene {
   protected postUpdates: Array<(dt: number) => void> = []
   private firstCharacter: PhysicsCharacter | undefined
   constructor() {
-    super(false, 20, false)
+    super()
 
     //temporary, so we don't need graphics
     debugPolygonPhysics.value = true

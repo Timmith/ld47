@@ -9,15 +9,15 @@ import {
 } from '~/meshes/Box2DPreviewMesh'
 import AvatarContactListener from '~/physics/AvatarContactListener'
 import PhysicsCharacter from '~/physics/PhysicsCharacter'
-import { createPhysicBox } from '~/utils/physics'
 import { World } from '~/vendor/Box2D/Box2D'
+import { createPhysicBox } from '~/physics/bodyHelpers'
 
 import TestPhysicsScene from './TestPhysics'
 
 export default class TestCharacterControlScene extends TestPhysicsScene {
   private _postUpdate: (dt: number) => void
   constructor() {
-    super(false, 20, false)
+    super()
 
     //temporary, so we don't need graphics
     debugPolygonPhysics.value = true

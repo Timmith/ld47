@@ -15,7 +15,12 @@ export function sfc32(a: number, b: number, c: number, d: number) {
   }
 }
 
-const gen = sfc32(100, 200, 300, 444)
-export function detRand(min = 0, max = 1) {
-  return gen() * (max - min) + min
+const genPhysics = sfc32(100, 200, 300, 444)
+export function detRandPhysics(min = 0, max = 1) {
+  return genPhysics() * (max - min) + min
+}
+
+const genGraphics = sfc32(100, 200, 300, 444)
+export function detRandGraphics(min = 0, max = 1) {
+  return genGraphics() * (max - min) + min
 }

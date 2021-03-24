@@ -1,5 +1,5 @@
 import { debugPolygonPhysics } from '~/meshes/Box2DPreviewMesh'
-import { createPhysicBox } from '~/utils/physics'
+import { createPhysicBox } from '~/physics/bodyHelpers'
 
 import { startControllableCharacters } from './TestCharacterControl'
 import TestPhysicsScene from './TestPhysics'
@@ -8,7 +8,7 @@ import { runTextPhysicsTest } from './TestTextPhysics'
 export default class TestCharacterControlOnTextScene extends TestPhysicsScene {
   private _postUpdate: (dt: number) => void
   constructor() {
-    super(false, 20, false)
+    super()
 
     //temporary, so we don't need graphics
     debugPolygonPhysics.value = true
