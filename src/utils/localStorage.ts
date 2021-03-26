@@ -1,4 +1,4 @@
-import { Color } from 'three'
+import { Color, Vector3 } from 'three'
 
 import { hexColor } from './colors'
 import { clamp } from './math'
@@ -72,4 +72,24 @@ export function getLocalStorageColor(key: string, defaultColor: string) {
 
 export function setLocalStorageColor(key: string, color: Color) {
   setLocalStorageParam(key, color.getHexString())
+}
+
+export function getLocalStorageVec3(
+  key: string,
+  defX = 0,
+  defY = 0,
+  defZ = 0,
+  min = -Infinity,
+  max = Infinity
+) {
+  const x = getLocalStorageFloat(key + '.x', defX, min, max)
+  const y = getLocalStorageFloat(key + '.y', defY, min, max)
+  const z = getLocalStorageFloat(key + '.z', defZ, min, max)
+  return new Vector3(x, y, z)
+}
+
+export function setLocalStorageVec3(key: string, val: Vector3) {
+  setLocalStorageFloat(key + '.x', val.x)
+  setLocalStorageFloat(key + '.y', val.y)
+  setLocalStorageFloat(key + '.z', val.z)
 }
