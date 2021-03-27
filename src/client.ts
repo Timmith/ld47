@@ -1,4 +1,5 @@
 import { Clock, Color, Vector3 } from 'three'
+import TestSpritesOnTileMapScene from '~/helpers/scenes/TestSpritesOnTileMapScene'
 import TestTileMapScene from '~/helpers/scenes/TestTileMapScene'
 
 import { simpleTweener } from './animation/tweeners'
@@ -47,7 +48,8 @@ const testClasses: { [K: string]: any } = {
   physicsPNG: TestPhysicsPNGScene,
   stencils: TestStencilsScene,
   text: TestTextScene,
-  tileMap: TestTileMapScene
+  tileMap: TestTileMapScene,
+  spritesOnTileMap: TestSpritesOnTileMapScene
 }
 
 let TestClass: new () => BaseTestScene = TestLightingScene

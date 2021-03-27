@@ -1,6 +1,7 @@
 import { Vector2 } from 'three'
 import { makeWobblyCircleShapePath } from '~/factories/shapePaths'
 import { debugPolygonPhysics } from '~/meshes/Box2DPreviewMesh'
+import { createPhysicBox } from '~/physics/bodyHelpers'
 import makePolygonPhysics from '~/physics/makePolygonPhysics'
 import PhysicsCharacter from '~/physics/PhysicsCharacter'
 import {
@@ -8,7 +9,6 @@ import {
   deconstructConcavePath3
 } from '~/utils/physics'
 import { BodyType } from '~/vendor/Box2D/Box2D'
-import { createPhysicBox } from '~/physics/bodyHelpers'
 
 import TestPhysicsScene from './TestPhysics'
 

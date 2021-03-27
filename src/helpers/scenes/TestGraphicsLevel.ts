@@ -1,29 +1,29 @@
 import { Mesh, MeshStandardMaterial } from 'three'
+import { getSimulator } from '~/helpers/physics/simulator'
 import getKeyboardInput from '~/input/getKeyboardInput'
 import KeyboardInput from '~/input/KeyboardInput'
 import { materialLibrary } from '~/materials/library'
 import { Box2DPreviewMesh } from '~/meshes/Box2DPreviewMesh'
+import BasicBalls from '~/physics/tests/BasicBalls'
 import PNGLevel from '~/PNGLevel'
 import { __pixelSizeMeters } from '~/settings/physics'
 import { getCachedChamferedBoxGeometry } from '~/utils/geometry'
 import { getUrlFlag, getUrlParam } from '~/utils/location'
+import { nowInSeconds } from '~/utils/performance'
 import { createPhysicBoxFromPixels } from '~/utils/physics'
 import { Fixture } from '~/vendor/Box2D/Box2D'
-import { getSimulator } from '~/helpers/physics/simulator'
-import { nowInSeconds } from '~/utils/performance'
 
 import ProceduralKeyboardMesh from '../../meshes/ProceduralKeyboardMesh'
 
 import TestLightingScene from './TestLighting'
-import BasicBalls from '~/physics/tests/BasicBalls'
 
 export default class TestGraphicsLevelScene extends TestLightingScene {
+  level: PNGLevel
   protected b2Preview: Box2DPreviewMesh | undefined
   protected sim = getSimulator(nowInSeconds, new BasicBalls())
   protected keyboardInput: KeyboardInput
   protected keyboardMesh: ProceduralKeyboardMesh
   protected checkpointBodies: Fixture[] = []
-  level: PNGLevel
   constructor(defaultLevel = 'test-layout') {
     super(false, false)
     // this.camera.position.y += 1.5

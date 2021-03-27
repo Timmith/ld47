@@ -1,11 +1,10 @@
 import { WebGLRenderer } from 'three'
-import { Box2DPreviewMesh } from '~/meshes/Box2DPreviewMesh'
 import { getSimulator } from '~/helpers/physics/simulator'
+import { Box2DPreviewMesh } from '~/meshes/Box2DPreviewMesh'
+import BasicBalls from '~/physics/tests/BasicBalls'
+import { nowInSeconds } from '~/utils/performance'
 
 import { BaseTestScene } from './BaseTestScene'
-import { nowInSeconds } from '~/utils/performance'
-import BasicBalls from '~/physics/tests/BasicBalls'
-
 
 export default class TestPhysicsScene extends BaseTestScene {
   protected b2Preview: Box2DPreviewMesh
@@ -19,7 +18,6 @@ export default class TestPhysicsScene extends BaseTestScene {
     this.scene.add(b2Preview)
 
     this.b2Preview = b2Preview
-
   }
   update(dt: number) {
     super.update(dt)

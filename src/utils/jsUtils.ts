@@ -8,6 +8,7 @@ export function boobyTrap<O, T extends keyof O>(
   Object.defineProperty(obj, propName, {
     get: () => {
       if (onGet) {
+        //@ts-ignore
         debugger // eslint-disable-line
       }
       return _prop
@@ -15,9 +16,11 @@ export function boobyTrap<O, T extends keyof O>(
     set: (value: O[T]) => {
       if (optionalSetCondition) {
         if (optionalSetCondition(value)) {
+          //@ts-ignore
           debugger // eslint-disable-line
         }
       } else {
+        //@ts-ignore
         debugger // eslint-disable-line
       }
       _prop = value

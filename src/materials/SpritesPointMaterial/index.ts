@@ -1,4 +1,4 @@
-import { RawShaderMaterial, Texture, Uniform, Vector3 } from 'three'
+import { DoubleSide, RawShaderMaterial, Texture, Uniform, Vector3 } from 'three'
 import { pixelAspectRatioUniform } from '~/uniforms'
 import { buildParameters } from '~/utils/jsUtils'
 import { getTempTexture } from '~/utils/threeUtils'
@@ -7,33 +7,31 @@ import fragmentShader from './frag.glsl'
 import vertexShader from './vert.glsl'
 
 interface Parameters {
-  mapTex: Texture
-  tileTex: Texture
+  spriteTex: Texture
   transform: Vector3
 }
 
 const __defaultParams: Parameters = {
-  mapTex: getTempTexture(),
-  tileTex: getTempTexture(),
+  spriteTex: getTempTexture(),
   transform: new Vector3(0, 0, 1 / 2048)
 }
 
-export class BasicFullScreenMaterial extends RawShaderMaterial {
+export class SpritesPointMaterial extends RawShaderMaterial {
   constructor(options: Partial<Parameters>) {
     const params = buildParameters(__defaultParams, options)
     super({
       uniforms: {
-        uMapTex: new Uniform(params.mapTex),
-        uTileTex: new Uniform(params.tileTex),
+        uSpriteTex: new Uniform(params.spriteTex),
         uTransform: new Uniform(params.transform),
         uAspectRatio: pixelAspectRatioUniform
       },
       vertexShader,
       fragmentShader,
+      // alphaTest: 0.5,
       // transparent: true,
-      depthWrite: false,
-      depthTest: false
-      // side: DoubleSide
+      depthWrite: true,
+      depthTest: true,
+      side: DoubleSide
     })
   }
 }

@@ -8,9 +8,9 @@ import {
   debugPolygonPhysics
 } from '~/meshes/Box2DPreviewMesh'
 import AvatarContactListener from '~/physics/AvatarContactListener'
+import { createPhysicBox } from '~/physics/bodyHelpers'
 import PhysicsCharacter from '~/physics/PhysicsCharacter'
 import { World } from '~/vendor/Box2D/Box2D'
-import { createPhysicBox } from '~/physics/bodyHelpers'
 
 import TestPhysicsScene from './TestPhysics'
 

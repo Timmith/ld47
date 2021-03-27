@@ -5,10 +5,7 @@ import { createPhysicBoxFromPixels } from '~/utils/physics'
 import TestPhysicsScene from './TestPhysics'
 
 export default class TestPhysicsPNGScene extends TestPhysicsScene {
-  constructor(
-    defaultLevel = 'test',
-    onLevelReady: () => void
-  ) {
+  constructor(defaultLevel = 'test', onLevelReady: () => void) {
     super()
     new PNGLevel(
       getUrlParam('level') || defaultLevel,

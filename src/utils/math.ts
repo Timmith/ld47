@@ -14,6 +14,10 @@ export function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val))
 }
 
+export function mod(val: number, freq: number) {
+  return ((val % freq) + freq) % freq
+}
+
 export function wrap(val: number, min: number, max: number) {
   const range = max - min
   return ((((val - min) % range) + range) % range) + min

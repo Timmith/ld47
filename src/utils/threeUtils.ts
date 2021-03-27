@@ -22,7 +22,7 @@ export function getTempTexture() {
   return __tempTexture!
 }
 
-export async function loadPixelatedTexture(path: string) {
+export async function loadPixelatedTexture(path: string, flipY = true) {
   return new Promise<Texture>(resolve => {
     const loader = new TextureLoader()
     loader.load(
@@ -31,6 +31,7 @@ export async function loadPixelatedTexture(path: string) {
         texture.encoding = sRGBEncoding
         texture.minFilter = NearestFilter
         texture.magFilter = NearestFilter
+        texture.flipY = flipY
         resolve(texture)
       },
       undefined,
