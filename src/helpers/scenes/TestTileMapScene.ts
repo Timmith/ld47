@@ -21,6 +21,7 @@ export default class TestTileMapScene extends BaseTestScene {
         tileTex,
         transform
       })
+
       const mapPreview = new Mesh(new PlaneGeometry(2, 2, 1, 1), material)
       scene.add(mapPreview)
     }

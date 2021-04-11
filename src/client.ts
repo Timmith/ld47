@@ -1,4 +1,5 @@
 import { Clock, Color, Vector3 } from 'three'
+import TestPhysicsTileMapPNGScene from '~/helpers/scenes/TestPhysicsTileMapPNG'
 import TestSpritesOnTileMapScene from '~/helpers/scenes/TestSpritesOnTileMapScene'
 import TestTileMapScene from '~/helpers/scenes/TestTileMapScene'
 
@@ -45,6 +46,7 @@ const testClasses: { [K: string]: any } = {
   textPhysics: TestTextPhysicsScene,
   physicsConcave: TestPhysicsConcaveBodiesScene,
   physicsCharacter: TestPhysicsCharacterScene,
+  physicsTileMapPNG: TestPhysicsTileMapPNGScene,
   physicsPNG: TestPhysicsPNGScene,
   stencils: TestStencilsScene,
   text: TestTextScene,

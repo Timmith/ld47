@@ -7,8 +7,9 @@ import { loadPixelatedTexture } from '~/utils/threeUtils'
 import TestTileMapScene from './TestTileMapScene'
 
 const __radiansToCardinal = 8 / (Math.PI * 2)
+const __momentum = 0.001
 const __minSpeed = 0.002
-const __maxSpeed = 0.03
+const __maxSpeed = 0.075
 export default class TestSpritesOnTileMapScene extends TestTileMapScene {
   private _tempXyFramesAttr: Float32BufferAttribute
   private _tempAngleSpeeds: Float32Array
@@ -26,7 +27,7 @@ export default class TestSpritesOnTileMapScene extends TestTileMapScene {
       const i2 = i * 2
       const angle = (~~(Math.random() * 8) / 8) * Math.PI * 2
       tempAngleSpeeds[i2] = angle
-      tempAngleSpeeds[i2+1] = rand2(0.01, 0.03)
+      tempAngleSpeeds[i2 + 1] = rand2(0.01, 0.03)
       // const angle = rand(-Math.PI, Math.PI)
       tempVelocities[i2] = Math.cos(angle) * speed
       tempVelocities[i2 + 1] = Math.sin(angle) * speed
@@ -47,10 +48,7 @@ export default class TestSpritesOnTileMapScene extends TestTileMapScene {
         transform
       })
       this._tempXyFramesAttr = geometry.xyFrameAttr
-      const sprites = new Points(
-        geometry,
-        material
-      )
+      const sprites = new Points(geometry, material)
       sprites.frustumCulled = false
       sprites.renderOrder = 1
       scene.add(sprites)
@@ -70,34 +68,34 @@ export default class TestSpritesOnTileMapScene extends TestTileMapScene {
     const angleSpeeds = this._tempAngleSpeeds
     const time = performance.now() * 0.002
     for (let i = 0; i < this.total; i++) {
-      const running = ((time * 0.2 + i * 0.001) % 2) < 0.5
+      const running = (time * 0.2 + i * 0.001) % 2 < 0.5
       const i2 = i * 2
       const i3 = i * 3
-      if(running) {
-        if(Math.abs(angleSpeeds[i2+1]) < __maxSpeed) {
-          angleSpeeds[i2+1] += __minSpeed
+      if (running) {
+        if (angleSpeeds[i2 + 1] < __maxSpeed) {
+          angleSpeeds[i2 + 1] += __momentum
         } else {
-          angleSpeeds[i2+1] = __maxSpeed
+          angleSpeeds[i2 + 1] = __maxSpeed
         }
       } else {
-        if(Math.abs(angleSpeeds[i2+1]) > __minSpeed) {
-          angleSpeeds[i2+1] -= __minSpeed
+        if (angleSpeeds[i2 + 1] > __minSpeed) {
+          angleSpeeds[i2 + 1] -= __momentum
         } else {
-          angleSpeeds[i2+1] = 0
+          angleSpeeds[i2 + 1] = 0
         }
       }
-      vel[i2] = Math.cos(angleSpeeds[i2]) * angleSpeeds[i2+1]
-      vel[i2+1] = Math.sin(angleSpeeds[i2]) * angleSpeeds[i2+1]
-      if(angleSpeeds[i2+1] > 0) {
+      vel[i2] = Math.cos(angleSpeeds[i2]) * angleSpeeds[i2 + 1]
+      vel[i2 + 1] = Math.sin(angleSpeeds[i2]) * angleSpeeds[i2 + 1]
+      if (angleSpeeds[i2 + 1] > 0) {
         const dir = ~~mod(
           Math.atan2(vel[i2 + 1], vel[i2]) * __radiansToCardinal + 1.5,
           8
         )
         xyF[i3 + 2] = dir * 8 + ~~(mod(time, 1) * 6)
       } else {
-        xyF[i3 + 2] = ~~(mod(time, 1) * 4) * 8 + 6 
+        xyF[i3 + 2] = ~~(mod(time, 1) * 4) * 8 + 6
       }
-      
+
       //integrate velocity and wrap around the world
       xyF[i3] = mod(xyF[i3] + vel[i2] * dt, 1)
       xyF[i3 + 1] = mod(xyF[i3 + 1] + vel[i2 + 1] * dt, 1)

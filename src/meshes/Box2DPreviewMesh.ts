@@ -14,6 +14,7 @@ import { getUrlFlag } from '~/utils/location'
 import { detRandGraphics } from '~/utils/random'
 import {
   Body,
+  ChainShape,
   CircleShape,
   Fixture,
   PolygonShape,
@@ -23,7 +24,7 @@ import {
   World
 } from '~/vendor/Box2D/Box2D'
 
-const __debugViewScale = 1
+const __debugViewScale: number = 0.7
 const __circleSegs = 16
 
 const __colorMatrixVisible = new Matrix4().compose(
@@ -80,6 +81,12 @@ function getShapeWorldVerts(shape: Shape, body: Body) {
       }
     case ShapeType.e_circleShape:
       return getCircleShapeWorldVerts(shape as CircleShape, body)
+    case ShapeType.e_chainShape:
+      if (debugPolygonPhysics.value) {
+        return getChainShapeWorldVerts(shape as ChainShape, body)
+      } else {
+        return undefined
+      }
     default:
       console.error('unsupported box2d shape type for debug view')
       return undefined
@@ -99,6 +106,15 @@ function getShapeWorldVertsCount(shape: Shape) {
     default:
       return 0
   }
+}
+
+function getChainShapeWorldVerts(polygon: ChainShape, body: Body) {
+  return polygon.m_vertices.map(vert => {
+    const worldVert = new Vec2()
+    body.GetWorldPoint(vert, worldVert)
+    worldVert.x /= device.aspect
+    return worldVert
+  })
 }
 
 function getPolygonShapeWorldVerts(polygon: PolygonShape, body: Body) {

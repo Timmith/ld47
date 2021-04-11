@@ -2,7 +2,7 @@ import { Vec2, World } from '~/vendor/Box2D/Box2D'
 
 import IPhysicsTest from './tests/IPhysicsTest'
 
-const HARD_STOP_AT_TICK = 200
+const HARD_STOP_AT_TICK = 2000
 export default class Simulator {
   world = new World(new Vec2(0, -9.8))
   timeAllowed = 0

@@ -21,16 +21,16 @@ const __defaultParams: Parameters = {
 export class SpritesPointMaterial extends RawShaderMaterial {
   constructor(options: Partial<Parameters> = {}) {
     const params = buildParameters(__defaultParams, options)
-    const uniforms: { [key:string]: Uniform } = {
+    const uniforms: { [key: string]: Uniform } = {
       uSpriteTex: new Uniform(params.spriteTex),
       uTransform: new Uniform(params.transform),
       uAspectRatio: pixelAspectRatioUniform
     }
-    const defines: { [key:string]: boolean | string | number} = {}
+    const defines: { [key: string]: boolean | string | number } = {}
 
-    if(params.paletteTex) {
-      uniforms.uPaletteTex = new Uniform(params.paletteTex),
-      defines.USE_PALETTE = true
+    if (params.paletteTex) {
+      ;(uniforms.uPaletteTex = new Uniform(params.paletteTex)),
+        (defines.USE_PALETTE = true)
     }
 
     super({
@@ -45,7 +45,7 @@ export class SpritesPointMaterial extends RawShaderMaterial {
       side: DoubleSide
     })
   }
-  set usePalette(val:boolean) {
+  set usePalette(val: boolean) {
     this.defines.USE_PALETTE = val
     this.needsUpdate = true
   }

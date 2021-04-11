@@ -1,4 +1,4 @@
-import { RawShaderMaterial, Texture, Uniform, Vector3 } from 'three'
+import { RawShaderMaterial, Texture, Uniform, Vector2, Vector3 } from 'three'
 import { pixelAspectRatioUniform } from '~/uniforms'
 import { buildParameters } from '~/utils/jsUtils'
 import { getTempTexture } from '~/utils/threeUtils'
@@ -24,6 +24,9 @@ export class BasicFullScreenMaterial extends RawShaderMaterial {
     super({
       uniforms: {
         uMapTex: new Uniform(params.mapTex),
+        uMapSize: new Uniform(
+          new Vector2(params.mapTex.image.width, params.mapTex.image.height)
+        ),
         uTileTex: new Uniform(params.tileTex),
         uTransform: new Uniform(params.transform),
         uAspectRatio: pixelAspectRatioUniform

@@ -6,24 +6,28 @@ import IPhysicsTest from './IPhysicsTest'
 
 export default class BasicBalls implements IPhysicsTest {
   circleBodies: Body[] = []
+  constructor(private _walls = true) {
+    //
+  }
   init(world: World) {
     for (let i = 0; i < 60; i++) {
       const circleBody = createPhysicsCircle(
         world,
         detRandPhysics(-1, 1),
-        1 + detRandPhysics(-0.2, 0.2),
+        1.5 + detRandPhysics(-0.2, 0.2),
         0.05,
         true
       )
       this.circleBodies.push(circleBody)
     }
-
-    createPhysicBox(world, 0, -0.3, 1, 0.1)
-    createPhysicBox(world, 0.2, 0.3, 1, 0.1)
-    const ramp = createPhysicBox(world, 0.8, 0, 1, 0.1)
-    ramp.SetAngle(Math.PI * 0.25)
-    const ramp2 = createPhysicBox(world, -0.8, 0, 1, 0.1)
-    ramp2.SetAngle(Math.PI * -0.25)
+    if (this._walls) {
+      createPhysicBox(world, 0, -0.3, 1, 0.1)
+      createPhysicBox(world, 0.2, 0.3, 1, 0.1)
+      const ramp = createPhysicBox(world, 0.8, 0, 1, 0.1)
+      ramp.SetAngle(Math.PI * 0.25)
+      const ramp2 = createPhysicBox(world, -0.8, 0, 1, 0.1)
+      ramp2.SetAngle(Math.PI * -0.25)
+    }
   }
   report() {
     return [
@@ -38,7 +42,7 @@ export default class BasicBalls implements IPhysicsTest {
         circleBody.SetLinearVelocity(new Vec2(0.0, 0.0))
         circleBody.SetPositionXY(
           detRandPhysics(-1, 1),
-          1 + detRandPhysics(-0.2, 0.2)
+          1.5 + detRandPhysics(-0.2, 0.2)
         )
       }
     }

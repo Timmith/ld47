@@ -1,6 +1,7 @@
 import { WebGLRenderer } from 'three'
 import { getSimulator } from '~/helpers/physics/simulator'
 import { Box2DPreviewMesh } from '~/meshes/Box2DPreviewMesh'
+import Simulator from '~/physics/Simulator'
 import BasicBalls from '~/physics/tests/BasicBalls'
 import { nowInSeconds } from '~/utils/performance'
 
@@ -8,9 +9,10 @@ import { BaseTestScene } from './BaseTestScene'
 
 export default class TestPhysicsScene extends BaseTestScene {
   protected b2Preview: Box2DPreviewMesh
-  protected sim = getSimulator(nowInSeconds, new BasicBalls())
-  constructor() {
+  protected sim: Simulator
+  constructor(walls = true) {
     super()
+    this.sim = getSimulator(nowInSeconds, new BasicBalls(walls))
     const b2World = this.sim.world
 
     setInterval(() => console.log(this.sim.logPerformance()), 2000)

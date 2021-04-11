@@ -41,3 +41,16 @@ export async function loadPixelatedTexture(path: string, flipY = true) {
     )
   })
 }
+
+export function getCanvasOfImageTexture(texture: Texture) {
+  const image = texture.image as ImageBitmap
+  const canvas = document.createElement('canvas')
+  canvas.width = image.width
+  canvas.height = image.height
+  const context = canvas.getContext('2d')
+  if (!context) {
+    throw new Error('could not get canvas context2d')
+  }
+  context.drawImage(image, 0, 0)
+  return context
+}

@@ -18,15 +18,19 @@ export default class SpritesPointGeometry extends BufferGeometry {
       xyFrameArray[i3 + 1] = rand(0, 1)
       xyFrameArray[i3 + 2] = ~~rand(0, 64)
     }
-    
-    const xyFrameAttr = new Float32BufferAttribute(xyFrameArray, partsPerItem, false)
+
+    const xyFrameAttr = new Float32BufferAttribute(
+      xyFrameArray,
+      partsPerItem,
+      false
+    )
     this.xyFrameAttr = xyFrameAttr
     this.addAttribute('xyFrame', xyFrameAttr, partsPerItem)
 
     const idArray = new Float32Array(total)
 
     for (let i = 0; i < total; i++) {
-        idArray[i] = rand(0, 1)
+      idArray[i] = rand(0, 1)
     }
     const idAttr = new Float32BufferAttribute(idArray, 1, false)
     this.idAttr = idAttr
