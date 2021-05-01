@@ -9,6 +9,7 @@ import TestCharacterControlScene from './helpers/scenes/TestCharacterControl'
 import TestCharacterControlOnTextScene from './helpers/scenes/TestCharacterControlOnText'
 import TestGraphicsCharacterScene from './helpers/scenes/TestGraphicsCharacter'
 import TestGraphicsLevelScene from './helpers/scenes/TestGraphicsLevel'
+import TestJitTilesScene from './helpers/scenes/TestJitTilesScene'
 import TestKeyboardCharacterScene from './helpers/scenes/TestKeyboardCharacter'
 import TestKeyboardInputScene from './helpers/scenes/TestKeyboardInput'
 import TestLightingScene from './helpers/scenes/TestLighting'
@@ -51,7 +52,8 @@ const testClasses: { [K: string]: any } = {
   stencils: TestStencilsScene,
   text: TestTextScene,
   tileMap: TestTileMapScene,
-  spritesOnTileMap: TestSpritesOnTileMapScene
+  spritesOnTileMap: TestSpritesOnTileMapScene,
+  jitTiles: TestJitTilesScene
 }
 
 let TestClass: new () => BaseTestScene = TestLightingScene
