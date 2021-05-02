@@ -15,8 +15,4 @@ interface OrientationLR {
   wr?: boolean
 }
 
-export default interface TileDescription {
-  beams?: Orientation
-  bricks?: OrientationLR
-  drywall?: OrientationLR
-}
+export type TileDescription = number
