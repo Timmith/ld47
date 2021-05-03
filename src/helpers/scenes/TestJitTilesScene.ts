@@ -6,14 +6,13 @@ import {
   RepeatWrapping,
   RGBAFormat,
   UnsignedByteType,
-  UnsignedIntType,
   UVMapping,
   Vector3,
   WebGLRenderer
 } from 'three'
 import { getMouseBoundViewTransform } from '~/helpers/viewTransformMouse'
 import { BasicFullScreenMaterial } from '~/materials/BasicFullScreenMaterial'
-import { rand2, wrap } from '~/utils/math'
+import { wrap } from '~/utils/math'
 import { detRandGraphics } from '~/utils/random'
 
 import { BaseTestScene } from './BaseTestScene'
@@ -68,16 +67,20 @@ export default class TestJitTilesScene extends BaseTestScene {
         'bricks9',
         'bricks10',
         'bricks11',
-        'bricks12',
-        'bricks13',
-        'bricks14',
-        'bricks15'
+        'bricks12'
       ]
 
       const totalTiles = 64 * 64
       const tileProperties = new Uint8Array(totalTiles)
       for (let i = 0; i < totalTiles; i++) {
-        tileProperties[i] = ~~detRandGraphics(255) | 1
+        let props = ~~detRandGraphics(255) | 1
+        if (
+          !(props & masks[tilePropertyLookup.indexOf('beam')]) &&
+          props & masks[tilePropertyLookup.indexOf('bricks')]
+        ) {
+          props = props ^ masks[tilePropertyLookup.indexOf('bricks')]
+        }
+        tileProperties[i] = props
       }
       const visualProperties = new Uint32Array(totalTiles)
       for (let i = 0, i4 = 0; i < totalTiles; i++, i4 += 4) {
@@ -93,11 +96,12 @@ export default class TestJitTilesScene extends BaseTestScene {
           val = val | masks[visualPropertyLookup.indexOf('floor')]
         }
         const propMaskBeam = masks[tilePropertyLookup.indexOf('beam')]
-        if (props & propMaskBeam) {
-          const beamN = propsN & propMaskBeam
-          const beamE = propsE & propMaskBeam
-          const beamS = propsS & propMaskBeam
-          const beamW = propsW & propMaskBeam
+        const beamC = props & propMaskBeam
+        const beamN = propsN & propMaskBeam
+        const beamE = propsE & propMaskBeam
+        const beamS = propsS & propMaskBeam
+        const beamW = propsW & propMaskBeam
+        if (beamC) {
           if (beamE && beamW && !beamS && !beamN) {
             val = val | masks[visualPropertyLookup.indexOf('beamEW')]
           } else if (!beamE && !beamW && beamS && beamN) {
@@ -118,8 +122,36 @@ export default class TestJitTilesScene extends BaseTestScene {
             }
           }
         }
-        if (props & masks[tilePropertyLookup.indexOf('bricks')]) {
-          val = val | masks[visualPropertyLookup.indexOf('bricks0')]
+        const propMaskBricks = masks[tilePropertyLookup.indexOf('bricks')]
+        if (props & propMaskBricks) {
+          const bricksS = propsN & propMaskBricks
+          const bricksE = propsE & propMaskBricks
+          const bricksN = propsS & propMaskBricks
+          const bricksW = propsW & propMaskBricks
+          if (bricksN) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks0')]
+            val = val | masks[visualPropertyLookup.indexOf('bricks1')]
+          } else if (!(beamC && beamS)) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks8')]
+          }
+          if (bricksE) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks2')]
+            val = val | masks[visualPropertyLookup.indexOf('bricks3')]
+          } else if (!(beamC && beamE)) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks9')]
+          }
+          if (bricksW) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks7')]
+            val = val | masks[visualPropertyLookup.indexOf('bricks6')]
+          } else if (!(beamC && beamW)) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks11')]
+          }
+          if (bricksS) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks4')]
+            val = val | masks[visualPropertyLookup.indexOf('bricks5')]
+          } else if (!(beamC && beamN)) {
+            val = val | masks[visualPropertyLookup.indexOf('bricks10')]
+          }
         }
         // val = val | masks[visualPropertyLookup.indexOf('bricks3')]
         // val = val | masks[visualPropertyLookup.indexOf('bricks8')]
@@ -127,12 +159,12 @@ export default class TestJitTilesScene extends BaseTestScene {
         visualProperties[i] = val
         const idBottom = tileMaker.getTileId(val)
         const idTop = tileMaker.getTileId(val | 1)
-        const indexBottomX = (idBottom * 32) % 256
-        const indexBottomY = ~~(idBottom / 8) * 32
+        const indexBottomX = (idBottom * 8) % 256
+        const indexBottomY = ~~(idBottom / 32) * 8
         data[i4] = indexBottomX
         data[i4 + 1] = indexBottomY
-        const indexTopX = (idTop * 32) % 256
-        const indexTopY = ~~(idTop / 8) * 32
+        const indexTopX = (idTop * 8) % 256
+        const indexTopY = ~~(idTop / 32) * 8
         data[i4 + 2] = indexTopX
         data[i4 + 3] = indexTopY
         // data[i4] = ~~rand2(0, 255)

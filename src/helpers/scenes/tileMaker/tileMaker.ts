@@ -15,16 +15,12 @@ import {
 } from 'three'
 import { getMaterial } from '~/helpers/materials/materialLib'
 import { getChamferedBoxGeometry } from '~/utils/geometry'
-import { detRandGraphics } from '~/utils/random'
-
-import { TileDescription } from './TileDescription'
 
 // const scale = 1
 const scale = Math.SQRT2 / 2
-const layer = 0
 export default class TileMaker {
   private _renderQueue: number[] = []
-  private _tileRegistry: TileDescription[] = []
+  private _tileRegistry: number[] = []
   private _scene = new Scene()
   private _cameraBottom = new OrthographicCamera(
     -16,
@@ -42,13 +38,12 @@ export default class TileMaker {
     0,
     64
   )
-  private _renderTarget = new WebGLRenderTarget(256, 256, {
+  private _renderTarget = new WebGLRenderTarget(1024, 1024, {
     minFilter: NearestFilter,
     magFilter: NearestFilter,
     generateMipmaps: false
   })
   private _tileTexNeedsUpdate = true
-  private _pivot: Object3D
   private _indexedMeshes: Object3D[]
 
   get texture() {
@@ -82,7 +77,9 @@ export default class TileMaker {
     const pivot = new Object3D()
     // pivot.rotation.y = Math.PI * 0.25
     const floor = new Mesh(new BoxBufferGeometry(32, 2, 32), floorMat)
-    const mortar = new Mesh(new BoxBufferGeometry(32, 32, 2), mortarMat)
+
+    //brick walls
+
     const drywall = new Mesh(new BoxBufferGeometry(32, 32, 2), drywallMat)
     const brickWidth = 7
     const brickHeight = 3
@@ -90,19 +87,71 @@ export default class TileMaker {
     const brickSpacingX = brickWidth + brickGap
     const brickSpacingY = brickHeight
     const brickGeo = getChamferedBoxGeometry(brickWidth, brickHeight, 4.5, 1)
-    const brickWallRoot = new Object3D()
-    for (let iRow = 0; iRow < 11; iRow++) {
-      for (let iCol = -6; iCol < 6; iCol++) {
-        const budge = (iRow % 2) * 0.5 - 0.25
-        const brick = new Mesh(brickGeo, brickMat)
-        brick.position.set(
-          (iCol + budge) * brickSpacingX + 0.5,
-          (iRow + 0.5) * brickSpacingY,
-          0
-        )
-        brickWallRoot.add(brick)
+    function makeBrickWall(colStart: number, colEnd: number) {
+      const brickWallRoot = new Object3D()
+      for (let iRow = 0; iRow < 11; iRow++) {
+        for (let iCol = -1; iCol < 1; iCol++) {
+          const budge = (iRow % 2) * 0.5 - 0.25
+          const brick = new Mesh(brickGeo, brickMat)
+          brick.position.set(
+            (iCol + budge) * brickSpacingX + brickWidth * 0.5,
+            (iRow + 0.5) * brickSpacingY,
+            0
+          )
+          brickWallRoot.add(brick)
+        }
       }
+      const mortar = new Mesh(
+        new BoxBufferGeometry((colEnd - colStart) * brickSpacingX - 1, 32, 1),
+        mortarMat
+      )
+      mortar.position.x = -1
+      mortar.position.y = 16
+      mortar.position.z = -0.75
+      brickWallRoot.add(mortar)
+      return brickWallRoot
     }
+    const brickWallSectionSC = makeBrickWall(-1, 1)
+    const brickWallSectionEC = brickWallSectionSC.clone(true)
+    const brickWallSectionNC = brickWallSectionSC.clone(true)
+    const brickWallSectionWC = brickWallSectionSC.clone(true)
+    brickWallSectionSC.position.z = 8
+    brickWallSectionSC.position.x = 0
+    brickWallSectionEC.position.x = 8
+    brickWallSectionEC.rotation.y = Math.PI * 0.5
+    brickWallSectionWC.position.x = -8
+    brickWallSectionWC.rotation.y = Math.PI * -0.5
+    brickWallSectionNC.position.z = -8
+    brickWallSectionNC.rotation.y = Math.PI
+    function makeBrickWallSectionsLR(brickWallC: Object3D) {
+      const brickWallL = brickWallC.clone(true)
+      const brickWallR = brickWallC.clone(true)
+      function moveRelX(brickWall: Object3D, amt: number) {
+        brickWall.position.x += Math.cos(brickWall.rotation.y) * amt
+        brickWall.position.z += Math.sin(brickWall.rotation.y) * amt
+      }
+      moveRelX(brickWallL, -16)
+      moveRelX(brickWallR, 16)
+      return { brickWallL, brickWallR }
+    }
+    const {
+      brickWallL: brickWallSectionSL,
+      brickWallR: brickWallSectionSR
+    } = makeBrickWallSectionsLR(brickWallSectionSC)
+    const {
+      brickWallL: brickWallSectionWL,
+      brickWallR: brickWallSectionWR
+    } = makeBrickWallSectionsLR(brickWallSectionWC)
+    const {
+      brickWallL: brickWallSectionNL,
+      brickWallR: brickWallSectionNR
+    } = makeBrickWallSectionsLR(brickWallSectionNC)
+    const {
+      brickWallL: brickWallSectionEL,
+      brickWallR: brickWallSectionER
+    } = makeBrickWallSectionsLR(brickWallSectionEC)
+
+    //wooden beams, struts and studs
 
     const woodPlateGeo = getChamferedBoxGeometry(36, 3, 6, 1)
     const bottomPlate = new Mesh(woodPlateGeo, woodMat)
@@ -157,16 +206,23 @@ export default class TileMaker {
     beamN.rotation.y = Math.PI * -0.5
 
     // brick.rotation.y = Math.PI * 0.25
-    mortar.position.y = 16
-    mortar.position.z = -0.25
     drywall.position.y = 16
     drywall.position.z = -4
     // ball.position.y = 14
     // this._camera.position.y = 16
     // this._camera.rotateY(Math.PI * -0.25)
-    pivot.add(brickWallRoot)
-    brickWallRoot.position.z = 5
-    brickWallRoot.add(mortar)
+    pivot.add(brickWallSectionNC)
+    pivot.add(brickWallSectionWC)
+    pivot.add(brickWallSectionSC)
+    pivot.add(brickWallSectionEC)
+    pivot.add(brickWallSectionNL)
+    pivot.add(brickWallSectionWL)
+    pivot.add(brickWallSectionSL)
+    pivot.add(brickWallSectionEL)
+    pivot.add(brickWallSectionNR)
+    pivot.add(brickWallSectionWR)
+    pivot.add(brickWallSectionSR)
+    pivot.add(brickWallSectionER)
     pivot.add(beamCenter)
     pivot.add(beamW)
     pivot.add(beamS)
@@ -192,32 +248,29 @@ export default class TileMaker {
       beamW, // 'beamW',
       beamFullSectionNS, // 'beamNS',
       beamFullSectionEW, // 'beamEW',
-      brickWallRoot
-      // 'bricks1',
-      // 'bricks2',
-      // 'bricks3',
-      // 'bricks4',
-      // 'bricks5',
-      // 'bricks6',
-      // 'bricks7',
-      // 'bricks8',
-      // 'bricks9',
-      // 'bricks10',
-      // 'bricks11',
-      // 'bricks12',
-      // 'bricks13',
-      // 'bricks14',
-      // 'bricks15'
+      brickWallSectionWR, // 0
+      brickWallSectionEL, // 1
+      brickWallSectionNR, // 2
+      brickWallSectionSR, // 3
+      brickWallSectionER, // 4
+      brickWallSectionWL, // 5
+      brickWallSectionSL, // 6
+      brickWallSectionNL, // 7
+      brickWallSectionNC, // 8
+      brickWallSectionEC, // 9
+      brickWallSectionSC, // 10
+      brickWallSectionWC // 11
     ]
 
     this._indexedMeshes = indexedMeshes
-
-    this._pivot = pivot
   }
-  getTileId(tileDescription: TileDescription) {
+  getTileId(tileDescription: number) {
     let index = this._tileRegistry.indexOf(tileDescription)
     if (index == -1) {
       index = this._tileRegistry.length
+      if (index >= 1024) {
+        console.error(`no more room for tiles! (${index})`)
+      }
       this._tileRegistry.push(tileDescription)
       this._renderQueue.push(index)
       this._tileTexNeedsUpdate = true
@@ -236,12 +289,8 @@ export default class TileMaker {
       renderer.setRenderTarget(this._renderTarget)
       for (let i = 0; i < this._renderQueue.length; i++) {
         const index = this._renderQueue[i]
-        const iCol = index % 8
-        const iRow = ~~(index / 8)
-        // this._pivot.rotation.y = (~~detRandGraphics(0, 4) * Math.PI * 2) / 4
-        // this._pivot.updateMatrix()
-        // this._pivot.updateMatrixWorld()
-        // this._testMaterial.color.setHSL(detRandGraphics(), detRandGraphics(), detRandGraphics())
+        const iCol = index % 32
+        const iRow = ~~(index / 32)
         const visualProps = this._tileRegistry[index]
         const layer2 = !!(visualProps & 1)
         for (let j = 0; j < this._indexedMeshes.length; j++) {
@@ -254,20 +303,8 @@ export default class TileMaker {
           layer2 ? this._cameraTop : this._cameraBottom
         )
       }
-      // for (let iCol = 0; iCol < 8; iCol++) {
-      //   for (let iRow = 0; iRow < 8; iRow++) {
-      //     this._pivot.rotation.y = (~~detRandGraphics(0, 4) * Math.PI * 2) / 4
-      //     this._pivot.updateMatrix()
-      //     this._pivot.updateMatrixWorld()
-      //     // this._testMaterial.color.setHSL(detRandGraphics(), detRandGraphics(), detRandGraphics())
-      //     renderer.setViewport(iCol * 32, iRow * 32, 32, 32)
-      //     renderer.setScissor(iCol * 32, iRow * 32, 32, 32)
-      //     renderer.render(this._scene, this._camera)
-      //   }
-      // }
       renderer.setViewport(oldViewport)
       renderer.setScissor(oldScissor)
-      renderer.setScissor(0, 0, 256, 256)
       renderer.setRenderTarget(null)
       renderer.setPixelRatio(originalPixelRatio)
       this._renderQueue.length = 0
