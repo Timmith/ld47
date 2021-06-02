@@ -31,17 +31,17 @@ export default class TestJitTilesScene extends BaseTestScene {
     async function initMapRenderer() {
       const data = new Uint8Array(64 * 64 * 4)
 
-      const masks = []
+      const masks: number[] = []
       for (let i = 0; i < 32; i++) {
         masks[i] = 1 << i
       }
 
-      const tilePropertyLookup = [
+      const metaPropertyLookup = [
         'floor',
         'beam',
         'bricks',
         'drywall',
-        'unused',
+        'grass',
         'unused2'
       ]
 
@@ -67,98 +67,133 @@ export default class TestJitTilesScene extends BaseTestScene {
         'bricks9',
         'bricks10',
         'bricks11',
-        'bricks12'
+        'grass',
+        'ground'
       ]
 
+      function metaBitsHas(val: number, maskName: string) {
+        return val & masks[metaPropertyLookup.indexOf(maskName)]
+      }
+
+      function metaBitsFlip(val: number, maskName: string) {
+        return val ^ masks[metaPropertyLookup.indexOf(maskName)]
+      }
+
+      function visualBitsEnable(val: number, maskName: string) {
+        return val | masks[visualPropertyLookup.indexOf(maskName)]
+      }
+
       const totalTiles = 64 * 64
-      const tileProperties = new Uint8Array(totalTiles)
+      const metaPropertyTiles = new Uint8Array(totalTiles)
+
+      let localMetaProps = 0
+      function localMetaBitsFlip(maskName: string) {
+        localMetaProps = metaBitsFlip(localMetaProps, maskName)
+      }
+      function localMetaBitsHas(maskName: string) {
+        return metaBitsHas(localMetaProps, maskName)
+      }
+
       for (let i = 0; i < totalTiles; i++) {
-        let props = ~~detRandGraphics(255) | 1
-        if (
-          !(props & masks[tilePropertyLookup.indexOf('beam')]) &&
-          props & masks[tilePropertyLookup.indexOf('bricks')]
-        ) {
-          props = props ^ masks[tilePropertyLookup.indexOf('bricks')]
+        localMetaProps = ~~detRandGraphics(255)
+        if (localMetaBitsHas('floor') && detRandGraphics() > 0.3) {
+          localMetaBitsFlip('floor')
         }
-        tileProperties[i] = props
+        if (!localMetaBitsHas('floor') && localMetaBitsHas('beam')) {
+          localMetaBitsFlip('beam')
+        }
+        if (!localMetaBitsHas('beam') && localMetaBitsHas('bricks')) {
+          localMetaBitsFlip('bricks')
+        }
+        if (localMetaBitsHas('floor') && localMetaBitsHas('grass')) {
+          localMetaBitsFlip('grass')
+        }
+        metaPropertyTiles[i] = localMetaProps
       }
       const visualProperties = new Uint32Array(totalTiles)
       for (let i = 0, i4 = 0; i < totalTiles; i++, i4 += 4) {
-        const props = tileProperties[i]
+        localMetaProps = metaPropertyTiles[i]
         const x = i % 64
         const y = ~~(i / 64)
-        const propsE = tileProperties[wrap(x + 1, 0, 64) + wrap(y, 0, 64) * 64]
-        const propsW = tileProperties[wrap(x - 1, 0, 64) + wrap(y, 0, 64) * 64]
-        const propsN = tileProperties[wrap(x, 0, 64) + wrap(y - 1, 0, 64) * 64]
-        const propsS = tileProperties[wrap(x, 0, 64) + wrap(y + 1, 0, 64) * 64]
-        let val = 0
-        if (props & masks[tilePropertyLookup.indexOf('floor')]) {
-          val = val | masks[visualPropertyLookup.indexOf('floor')]
+        const metaPropsE =
+          metaPropertyTiles[wrap(x + 1, 0, 64) + wrap(y, 0, 64) * 64]
+        const metaPropsW =
+          metaPropertyTiles[wrap(x - 1, 0, 64) + wrap(y, 0, 64) * 64]
+        const metaPropsN =
+          metaPropertyTiles[wrap(x, 0, 64) + wrap(y - 1, 0, 64) * 64]
+        const metaPropsS =
+          metaPropertyTiles[wrap(x, 0, 64) + wrap(y + 1, 0, 64) * 64]
+        let visProps = 0
+        function myVisualBitsEnable(maskName: string) {
+          visProps = visualBitsEnable(visProps, maskName)
         }
-        const propMaskBeam = masks[tilePropertyLookup.indexOf('beam')]
-        const beamC = props & propMaskBeam
-        const beamN = propsN & propMaskBeam
-        const beamE = propsE & propMaskBeam
-        const beamS = propsS & propMaskBeam
-        const beamW = propsW & propMaskBeam
+
+        myVisualBitsEnable(localMetaBitsHas('floor') ? 'floor' : 'ground')
+
+        if (localMetaBitsHas('grass')) {
+          myVisualBitsEnable('grass')
+        }
+        const propMaskBeam = masks[metaPropertyLookup.indexOf('beam')]
+        const beamC = localMetaProps & propMaskBeam
+        const beamN = metaPropsN & propMaskBeam
+        const beamE = metaPropsE & propMaskBeam
+        const beamS = metaPropsS & propMaskBeam
+        const beamW = metaPropsW & propMaskBeam
         if (beamC) {
           if (beamE && beamW && !beamS && !beamN) {
-            val = val | masks[visualPropertyLookup.indexOf('beamEW')]
+            myVisualBitsEnable('beamEW')
           } else if (!beamE && !beamW && beamS && beamN) {
-            val = val | masks[visualPropertyLookup.indexOf('beamNS')]
+            myVisualBitsEnable('beamNS')
           } else {
-            val = val | masks[visualPropertyLookup.indexOf('beamCenter')]
+            myVisualBitsEnable('beamCenter')
             if (beamE) {
-              val = val | masks[visualPropertyLookup.indexOf('beamE')]
+              myVisualBitsEnable('beamE')
             }
             if (beamW) {
-              val = val | masks[visualPropertyLookup.indexOf('beamW')]
+              myVisualBitsEnable('beamW')
             }
             if (beamN) {
-              val = val | masks[visualPropertyLookup.indexOf('beamN')]
+              myVisualBitsEnable('beamN')
             }
             if (beamS) {
-              val = val | masks[visualPropertyLookup.indexOf('beamS')]
+              myVisualBitsEnable('beamS')
             }
           }
         }
-        const propMaskBricks = masks[tilePropertyLookup.indexOf('bricks')]
-        if (props & propMaskBricks) {
-          const bricksS = propsN & propMaskBricks
-          const bricksE = propsE & propMaskBricks
-          const bricksN = propsS & propMaskBricks
-          const bricksW = propsW & propMaskBricks
+        const propMaskBricks = masks[metaPropertyLookup.indexOf('bricks')]
+        if (localMetaProps & propMaskBricks) {
+          const bricksS = metaPropsN & propMaskBricks
+          const bricksE = metaPropsE & propMaskBricks
+          const bricksN = metaPropsS & propMaskBricks
+          const bricksW = metaPropsW & propMaskBricks
           if (bricksN) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks0')]
-            val = val | masks[visualPropertyLookup.indexOf('bricks1')]
+            myVisualBitsEnable('bricks0')
+            myVisualBitsEnable('bricks1')
           } else if (!(beamC && beamS)) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks8')]
+            myVisualBitsEnable('bricks8')
           }
           if (bricksE) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks2')]
-            val = val | masks[visualPropertyLookup.indexOf('bricks3')]
+            myVisualBitsEnable('bricks2')
+            myVisualBitsEnable('bricks3')
           } else if (!(beamC && beamE)) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks9')]
+            myVisualBitsEnable('bricks9')
           }
           if (bricksW) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks7')]
-            val = val | masks[visualPropertyLookup.indexOf('bricks6')]
+            myVisualBitsEnable('bricks7')
+            myVisualBitsEnable('bricks6')
           } else if (!(beamC && beamW)) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks11')]
+            myVisualBitsEnable('bricks11')
           }
           if (bricksS) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks4')]
-            val = val | masks[visualPropertyLookup.indexOf('bricks5')]
+            myVisualBitsEnable('bricks4')
+            myVisualBitsEnable('bricks5')
           } else if (!(beamC && beamN)) {
-            val = val | masks[visualPropertyLookup.indexOf('bricks10')]
+            myVisualBitsEnable('bricks10')
           }
         }
-        // val = val | masks[visualPropertyLookup.indexOf('bricks3')]
-        // val = val | masks[visualPropertyLookup.indexOf('bricks8')]
-        // val = val | masks[visualPropertyLookup.indexOf('bricks12')]
-        visualProperties[i] = val
-        const idBottom = tileMaker.getTileId(val)
-        const idTop = tileMaker.getTileId(val | 1)
+        visualProperties[i] = visProps
+        const idBottom = tileMaker.getTileId(visProps)
+        const idTop = tileMaker.getTileId(visProps | 1)
         const indexBottomX = (idBottom * 8) % 256
         const indexBottomY = ~~(idBottom / 32) * 8
         data[i4] = indexBottomX

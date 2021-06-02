@@ -1,20 +1,27 @@
 import {
   Color,
+  DoubleSide,
   MeshStandardMaterial,
   MeshStandardMaterialParameters
 } from 'three'
 
 type CuratedMaterialName =
+  | 'ground'
   | 'brick'
   | 'mortar'
   | 'drywall'
   | 'floor'
   | 'wood'
   | 'plastic'
+  | 'grass'
 
 export const standardMaterialParamLib: {
   [K in CuratedMaterialName]: MeshStandardMaterialParameters
 } = {
+  ground: {
+    roughness: 1,
+    color: new Color(0.06, 0.04, 0.03)
+  },
   brick: {
     roughness: 1,
     color: new Color(0.3, 0.11, 0.1)
@@ -38,6 +45,12 @@ export const standardMaterialParamLib: {
   plastic: {
     roughness: 0.5,
     color: new Color(0.2, 0.25, 0.4)
+  },
+  grass: {
+    roughness: 0.75,
+    color: new Color(0.1, 0.6, 0.1),
+    side: DoubleSide
+    // wireframe: true
   }
 }
 

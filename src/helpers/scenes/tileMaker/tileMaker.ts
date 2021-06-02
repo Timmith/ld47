@@ -13,6 +13,7 @@ import {
   WebGLRenderer,
   WebGLRenderTarget
 } from 'three'
+import GrassGeometry from '~/geometries/GrassGeometry'
 import { getMaterial } from '~/helpers/materials/materialLib'
 import { getChamferedBoxGeometry } from '~/utils/geometry'
 
@@ -69,7 +70,9 @@ export default class TileMaker {
     const mortarMat = getMaterial('mortar')
     const drywallMat = getMaterial('drywall')
     const floorMat = getMaterial('floor')
+    const groundMat = getMaterial('ground')
     const ballMat = getMaterial('plastic')
+    const grassMat = getMaterial('grass')
     const woodMat = getMaterial('wood')
     const ball = new Mesh(new SphereGeometry(16, 32, 16), ballMat)
     ball.scale.y = Math.SQRT1_2
@@ -77,6 +80,7 @@ export default class TileMaker {
     const pivot = new Object3D()
     // pivot.rotation.y = Math.PI * 0.25
     const floor = new Mesh(new BoxBufferGeometry(32, 2, 32), floorMat)
+    const ground = new Mesh(new BoxBufferGeometry(32, 2, 32), groundMat)
 
     //brick walls
 
@@ -233,8 +237,14 @@ export default class TileMaker {
     // pivot.add(drywall)
     floor.position.y = -1
     scene.add(floor)
+    ground.position.y = -1
+    scene.add(ground)
     // scene.add(ball)
     scene.add(pivot)
+
+    //grass
+    const grass = new Mesh(new GrassGeometry(), grassMat)
+    scene.add(grass)
 
     const dummy = new Object3D()
 
@@ -259,7 +269,9 @@ export default class TileMaker {
       brickWallSectionNC, // 8
       brickWallSectionEC, // 9
       brickWallSectionSC, // 10
-      brickWallSectionWC // 11
+      brickWallSectionWC, // 11
+      grass,
+      ground
     ]
 
     this._indexedMeshes = indexedMeshes
