@@ -4,10 +4,10 @@ import {
   Uint16BufferAttribute,
   Vector3
 } from 'three'
-import { rand } from '~/utils/math'
+import { detRandGrass } from '~/utils/random'
 
 export default class GrassGeometry extends BufferGeometry {
-  constructor(count = 300) {
+  constructor(count = 200) {
     super()
     const itemSize = 3
     const posArr = new Float32Array(count * 3 * itemSize)
@@ -21,15 +21,23 @@ export default class GrassGeometry extends BufferGeometry {
     const normalUp = new Vector3(0, 1, 0)
     const normal = new Vector3(0, 1, 0)
     const ab = new Vector3(0, 1, 0)
+    const grassScale = 1
     for (let i = 0; i < count; i++) {
-      const angle = rand(-Math.PI, Math.PI)
-      offset.x = Math.cos(angle) * 2
-      offset.z = Math.sin(angle) * 2
+      const angle = detRandGrass(-Math.PI, Math.PI)
+      offset.x = Math.cos(angle) * 2 * grassScale
+      offset.z = Math.sin(angle) * 2 * grassScale
       const i9 = i * 9
-      pos.set(rand(-16, 16), 0, rand(-16, 16))
+      const polarAngle = detRandGrass(-Math.PI, Math.PI)
+      const polarDistance = detRandGrass(0, 16)
+      // pos.set(detRandGrass(-16, 16), 0, detRandGrass(-16, 16))
+      pos.set(
+        Math.cos(polarAngle) * polarDistance,
+        0,
+        Math.sin(polarAngle) * polarDistance
+      )
       posA.copy(pos).add(offset)
       posB.copy(pos).sub(offset)
-      pos.y += rand(6, 10)
+      pos.y += detRandGrass(6, 10) * grassScale
       posA.toArray(posArr, i9)
       pos.toArray(posArr, i9 + 3)
       posB.toArray(posArr, i9 + 6)

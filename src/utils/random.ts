@@ -24,3 +24,8 @@ const genGraphics = sfc32(100, 200, 300, 444)
 export function detRandGraphics(min = 0, max = 1) {
   return genGraphics() * (max - min) + min
 }
+
+const genGrass = sfc32(100, 200, 300, 444)
+export function detRandGrass(min = 0, max = 1) {
+  return genGrass() * (max - min) + min
+}
