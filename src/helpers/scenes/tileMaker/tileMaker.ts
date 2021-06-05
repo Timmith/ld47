@@ -22,7 +22,8 @@ import { getChamferedBoxGeometry } from '~/utils/geometry'
 const scale = Math.SQRT2 / 2
 export default class TileMaker {
   private _renderQueue: number[] = []
-  private _tileRegistry: number[] = []
+  private _tileRegistry: Uint8Array[] = []
+  private _tileHashRegistry: string[] = []
   private _scene = new Scene()
   private _cameraBottom = new OrthographicCamera(
     -16,
@@ -244,7 +245,6 @@ export default class TileMaker {
     // scene.add(ball)
     scene.add(pivot)
 
-
     const grassGeoA = new GrassGeometry()
     const grassGeoH = new GrassGeometry()
     const grassGeoV = new GrassGeometry()
@@ -356,14 +356,17 @@ export default class TileMaker {
 
     this._indexedMeshes = indexedMeshes
   }
-  getTileId(tileDescription: number) {
-    let index = this._tileRegistry.indexOf(tileDescription)
-    if (index == -1) {
+  getTileId(tileDescription: Uint8Array) {
+    // const hash = Buffer.from(tileDescription).toString('utf-8')
+    const hash = tileDescription.toString()
+    let index = this._tileHashRegistry.indexOf(hash)
+    if (index === -1) {
       index = this._tileRegistry.length
       if (index >= 1024) {
         console.error(`no more room for tiles! (${index})`)
       }
       this._tileRegistry.push(tileDescription)
+      this._tileHashRegistry.push(hash)
       this._renderQueue.push(index)
       this._tileTexNeedsUpdate = true
     }
@@ -379,14 +382,15 @@ export default class TileMaker {
       renderer.getScissor(oldScissor)
       this._tileTexNeedsUpdate = false
       renderer.setRenderTarget(this._renderTarget)
-      for (let i = 0; i < this._renderQueue.length; i++) {
-        const index = this._renderQueue[i]
+      for (const index of this._renderQueue) {
         const iCol = index % 32
         const iRow = ~~(index / 32)
         const visualProps = this._tileRegistry[index]
-        const layer2 = !!(visualProps & 1)
+        const layer2 = !!(visualProps[0] & 1)
         for (let j = 0; j < this._indexedMeshes.length; j++) {
-          this._indexedMeshes[j].visible = !!(visualProps & (1 << j))
+          const jb = ~~(j / 8)
+          const j8 = j % 8
+          this._indexedMeshes[j].visible = !!(visualProps[jb] & (1 << j8))
         }
         renderer.setViewport(iCol * 32, iRow * 32, 32, 32)
         renderer.setScissor(iCol * 32, iRow * 32, 32, 32)

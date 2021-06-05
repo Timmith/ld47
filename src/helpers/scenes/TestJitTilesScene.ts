@@ -31,9 +31,13 @@ export default class TestJitTilesScene extends BaseTestScene {
     async function initMapRenderer() {
       const data = new Uint8Array(64 * 64 * 4)
 
-      const masks: number[] = []
+      const masks32: number[] = []
       for (let i = 0; i < 32; i++) {
-        masks[i] = 1 << i
+        masks32[i] = 1 << i
+      }
+      const masks8: number[] = []
+      for (let i = 0; i < 8; i++) {
+        masks8[i] = 1 << i
       }
 
       const metaPropertyLookup = [
@@ -87,17 +91,21 @@ export default class TestJitTilesScene extends BaseTestScene {
         'bushW',
         'bushNW'
       ]
+      const bytesPerTile = Math.ceil(visualPropertyLookup.length / 8)
 
       function metaBitsHas(val: number, maskName: string) {
-        return val & masks[metaPropertyLookup.indexOf(maskName)]
+        return val & masks32[metaPropertyLookup.indexOf(maskName)]
       }
 
       function metaBitsFlip(val: number, maskName: string) {
-        return val ^ masks[metaPropertyLookup.indexOf(maskName)]
+        return val ^ masks32[metaPropertyLookup.indexOf(maskName)]
       }
 
-      function visualBitsEnable(val: number, maskName: string) {
-        return val | masks[visualPropertyLookup.indexOf(maskName)]
+      function visualBitsEnable(val: Uint8Array, maskName: string) {
+        const i = visualPropertyLookup.indexOf(maskName)
+        const ib = ~~(i / 8)
+        const i8 = i % 8
+        val[ib] |= masks8[i8]
       }
 
       const totalTiles = 64 * 64
@@ -128,7 +136,11 @@ export default class TestJitTilesScene extends BaseTestScene {
         if (localMetaBitsHas('floor') && localMetaBitsHas('bush')) {
           localMetaBitsFlip('bush')
         }
-        if (!localMetaBitsHas('floor') && !localMetaBitsHas('grass') && detRandGraphics() > 0.5) {
+        if (
+          !localMetaBitsHas('floor') &&
+          !localMetaBitsHas('grass') &&
+          detRandGraphics() > 0.5
+        ) {
           localMetaBitsFlip('grass')
         }
         if (!localMetaBitsHas('grass') && localMetaBitsHas('bush')) {
@@ -136,7 +148,7 @@ export default class TestJitTilesScene extends BaseTestScene {
         }
         metaPropertyTiles[i] = localMetaProps
       }
-      const visualProperties = new Uint32Array(totalTiles)
+      const visualProperties = new Uint8Array(totalTiles * bytesPerTile)
       for (let i = 0, i4 = 0; i < totalTiles; i++, i4 += 4) {
         localMetaProps = metaPropertyTiles[i]
         const x = i % 64
@@ -157,94 +169,102 @@ export default class TestJitTilesScene extends BaseTestScene {
           metaPropertyTiles[wrap(x - 1, 0, 64) + wrap(y, 0, 64) * 64]
         const metaPropsNW =
           metaPropertyTiles[wrap(x - 1, 0, 64) + wrap(y - 1, 0, 64) * 64]
-        let visProps = 0
+        const visProps = new Uint8Array(bytesPerTile)
         function myVisualBitsEnable(maskName: string) {
-          visProps = visualBitsEnable(visProps, maskName)
+          visualBitsEnable(visProps, maskName)
         }
 
         myVisualBitsEnable(localMetaBitsHas('floor') ? 'floor' : 'ground')
 
-        const propMaskGrass = masks[metaPropertyLookup.indexOf('grass')]
+        const propMaskGrass = masks32[metaPropertyLookup.indexOf('grass')]
         if (localMetaBitsHas('grass')) {
           myVisualBitsEnable('grassC')
-          if(metaPropsN & propMaskGrass) {
+          if (metaPropsN & propMaskGrass) {
             myVisualBitsEnable('grassN')
           }
-          if(metaPropsE & propMaskGrass) {
+          if (metaPropsE & propMaskGrass) {
             myVisualBitsEnable('grassE')
           }
-          if(metaPropsS & propMaskGrass) {
+          if (metaPropsS & propMaskGrass) {
             myVisualBitsEnable('grassS')
           }
-          if(metaPropsW & propMaskGrass) {
+          if (metaPropsW & propMaskGrass) {
             myVisualBitsEnable('grassW')
           }
-          if(metaPropsNE & propMaskGrass
-            && metaPropsN & propMaskGrass
-            && metaPropsE & propMaskGrass
-            ) {
+          if (
+            metaPropsNE & propMaskGrass &&
+            metaPropsN & propMaskGrass &&
+            metaPropsE & propMaskGrass
+          ) {
             myVisualBitsEnable('grassNE')
           }
-          if(metaPropsNW & propMaskGrass
-            && metaPropsN & propMaskGrass
-            && metaPropsW & propMaskGrass
-            ) {
+          if (
+            metaPropsNW & propMaskGrass &&
+            metaPropsN & propMaskGrass &&
+            metaPropsW & propMaskGrass
+          ) {
             myVisualBitsEnable('grassNW')
           }
-          if(metaPropsSE & propMaskGrass
-            && metaPropsS & propMaskGrass
-            && metaPropsE & propMaskGrass
-            ) {
+          if (
+            metaPropsSE & propMaskGrass &&
+            metaPropsS & propMaskGrass &&
+            metaPropsE & propMaskGrass
+          ) {
             myVisualBitsEnable('grassSE')
           }
-          if(metaPropsSW & propMaskGrass
-            && metaPropsS & propMaskGrass
-            && metaPropsW & propMaskGrass
-            ) {
+          if (
+            metaPropsSW & propMaskGrass &&
+            metaPropsS & propMaskGrass &&
+            metaPropsW & propMaskGrass
+          ) {
             myVisualBitsEnable('grassSW')
           }
         }
-        const propMaskBush = masks[metaPropertyLookup.indexOf('bush')]
+        const propMaskBush = masks32[metaPropertyLookup.indexOf('bush')]
         if (localMetaBitsHas('bush')) {
           myVisualBitsEnable('bushC')
-          if(metaPropsN & propMaskBush) {
+          if (metaPropsN & propMaskBush) {
             myVisualBitsEnable('bushN')
           }
-          if(metaPropsE & propMaskBush) {
+          if (metaPropsE & propMaskBush) {
             myVisualBitsEnable('bushE')
           }
-          if(metaPropsS & propMaskBush) {
+          if (metaPropsS & propMaskBush) {
             myVisualBitsEnable('bushS')
           }
-          if(metaPropsW & propMaskBush) {
+          if (metaPropsW & propMaskBush) {
             myVisualBitsEnable('bushW')
           }
-          if(metaPropsNE & propMaskBush
-            && metaPropsN & propMaskBush
-            && metaPropsE & propMaskBush
-            ) {
+          if (
+            metaPropsNE & propMaskBush &&
+            metaPropsN & propMaskBush &&
+            metaPropsE & propMaskBush
+          ) {
             myVisualBitsEnable('bushNE')
           }
-          if(metaPropsNW & propMaskBush
-            && metaPropsN & propMaskBush
-            && metaPropsW & propMaskBush
-            ) {
+          if (
+            metaPropsNW & propMaskBush &&
+            metaPropsN & propMaskBush &&
+            metaPropsW & propMaskBush
+          ) {
             myVisualBitsEnable('bushNW')
           }
-          if(metaPropsSE & propMaskBush
-            && metaPropsS & propMaskBush
-            && metaPropsE & propMaskBush
-            ) {
+          if (
+            metaPropsSE & propMaskBush &&
+            metaPropsS & propMaskBush &&
+            metaPropsE & propMaskBush
+          ) {
             myVisualBitsEnable('bushSE')
           }
-          if(metaPropsSW & propMaskBush
-            && metaPropsS & propMaskBush
-            && metaPropsW & propMaskBush
-            ) {
+          if (
+            metaPropsSW & propMaskBush &&
+            metaPropsS & propMaskBush &&
+            metaPropsW & propMaskBush
+          ) {
             myVisualBitsEnable('bushSW')
           }
         }
-        const propMaskBeam = masks[metaPropertyLookup.indexOf('beam')]
+        const propMaskBeam = masks32[metaPropertyLookup.indexOf('beam')]
         const beamC = localMetaProps & propMaskBeam
         const beamN = metaPropsN & propMaskBeam
         const beamE = metaPropsE & propMaskBeam
@@ -271,7 +291,7 @@ export default class TestJitTilesScene extends BaseTestScene {
             }
           }
         }
-        const propMaskBricks = masks[metaPropertyLookup.indexOf('bricks')]
+        const propMaskBricks = masks32[metaPropertyLookup.indexOf('bricks')]
         if (localMetaProps & propMaskBricks) {
           const bricksS = metaPropsN & propMaskBricks
           const bricksE = metaPropsE & propMaskBricks
@@ -302,9 +322,11 @@ export default class TestJitTilesScene extends BaseTestScene {
             myVisualBitsEnable('bricks10')
           }
         }
-        visualProperties[i] = visProps
+        visualProperties.set(visProps, 0)
         const idBottom = tileMaker.getTileId(visProps)
-        const idTop = tileMaker.getTileId(visProps | 1)
+        const visProps2 = visProps.slice()
+        visProps2[0] |= 1
+        const idTop = tileMaker.getTileId(visProps2)
         const indexBottomX = (idBottom * 8) % 256
         const indexBottomY = ~~(idBottom / 32) * 8
         data[i4] = indexBottomX
