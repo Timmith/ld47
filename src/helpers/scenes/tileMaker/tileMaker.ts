@@ -13,6 +13,7 @@ import {
   WebGLRenderer,
   WebGLRenderTarget
 } from 'three'
+import BushGeometry from '~/geometries/BushGeometry'
 import GrassGeometry from '~/geometries/GrassGeometry'
 import { getMaterial } from '~/helpers/materials/materialLib'
 import { getChamferedBoxGeometry } from '~/utils/geometry'
@@ -73,6 +74,7 @@ export default class TileMaker {
     const groundMat = getMaterial('ground')
     const ballMat = getMaterial('plastic')
     const grassMat = getMaterial('grass')
+    const bushMat = getMaterial('bush')
     const woodMat = getMaterial('wood')
     const ball = new Mesh(new SphereGeometry(16, 32, 16), ballMat)
     ball.scale.y = Math.SQRT1_2
@@ -242,9 +244,70 @@ export default class TileMaker {
     // scene.add(ball)
     scene.add(pivot)
 
+
+    const grassGeoA = new GrassGeometry()
+    const grassGeoH = new GrassGeometry()
+    const grassGeoV = new GrassGeometry()
+    const grassGeoCorner = new GrassGeometry()
     //grass
-    const grass = new Mesh(new GrassGeometry(), grassMat)
-    scene.add(grass)
+    const grassC = new Mesh(grassGeoA, grassMat)
+    scene.add(grassC)
+    const grassN = new Mesh(grassGeoV, grassMat)
+    scene.add(grassN)
+    grassN.position.set(0, 0, 16)
+    const grassNE = new Mesh(grassGeoCorner, grassMat)
+    scene.add(grassNE)
+    grassNE.position.set(16, 0, 16)
+    const grassE = new Mesh(grassGeoH, grassMat)
+    scene.add(grassE)
+    grassE.position.set(16, 0, 0)
+    const grassSE = new Mesh(grassGeoCorner, grassMat)
+    scene.add(grassSE)
+    grassSE.position.set(16, 0, -16)
+    const grassS = new Mesh(grassGeoV, grassMat)
+    scene.add(grassS)
+    grassS.position.set(0, 0, -16)
+    const grassSW = new Mesh(grassGeoCorner, grassMat)
+    scene.add(grassSW)
+    grassSW.position.set(-16, 0, -16)
+    const grassW = new Mesh(grassGeoH, grassMat)
+    scene.add(grassW)
+    grassW.position.set(-16, 0, 0)
+    const grassNW = new Mesh(grassGeoCorner, grassMat)
+    scene.add(grassNW)
+    grassNW.position.set(-16, 0, 16)
+
+    const bushGeoA = new BushGeometry()
+    const bushGeoH = new BushGeometry()
+    const bushGeoV = new BushGeometry()
+    const bushGeoCorner = new BushGeometry()
+    //bush
+    const bushC = new Mesh(bushGeoA, bushMat)
+    scene.add(bushC)
+    const bushN = new Mesh(bushGeoV, bushMat)
+    scene.add(bushN)
+    bushN.position.set(0, 0, 16)
+    const bushNE = new Mesh(bushGeoCorner, bushMat)
+    scene.add(bushNE)
+    bushNE.position.set(16, 0, 16)
+    const bushE = new Mesh(bushGeoH, bushMat)
+    scene.add(bushE)
+    bushE.position.set(16, 0, 0)
+    const bushSE = new Mesh(bushGeoCorner, bushMat)
+    scene.add(bushSE)
+    bushSE.position.set(16, 0, -16)
+    const bushS = new Mesh(bushGeoV, bushMat)
+    scene.add(bushS)
+    bushS.position.set(0, 0, -16)
+    const bushSW = new Mesh(bushGeoCorner, bushMat)
+    scene.add(bushSW)
+    bushSW.position.set(-16, 0, -16)
+    const bushW = new Mesh(bushGeoH, bushMat)
+    scene.add(bushW)
+    bushW.position.set(-16, 0, 0)
+    const bushNW = new Mesh(bushGeoCorner, bushMat)
+    scene.add(bushNW)
+    bushNW.position.set(-16, 0, 16)
 
     const dummy = new Object3D()
 
@@ -270,8 +333,25 @@ export default class TileMaker {
       brickWallSectionEC, // 9
       brickWallSectionSC, // 10
       brickWallSectionWC, // 11
-      grass,
-      ground
+      ground,
+      grassC,
+      grassN,
+      grassNE,
+      grassE,
+      grassSE,
+      grassS,
+      grassSW,
+      grassW,
+      grassNW,
+      bushC,
+      bushN,
+      bushNE,
+      bushE,
+      bushSE,
+      bushS,
+      bushSW,
+      bushW,
+      bushNW
     ]
 
     this._indexedMeshes = indexedMeshes

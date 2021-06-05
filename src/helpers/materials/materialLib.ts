@@ -14,6 +14,7 @@ type CuratedMaterialName =
   | 'wood'
   | 'plastic'
   | 'grass'
+  | 'bush'
 
 export const standardMaterialParamLib: {
   [K in CuratedMaterialName]: MeshStandardMaterialParameters
@@ -49,6 +50,12 @@ export const standardMaterialParamLib: {
   grass: {
     roughness: 0.75,
     color: new Color(0.1, 0.6, 0.1),
+    side: DoubleSide
+    // wireframe: true
+  },
+  bush: {
+    roughness: 0.75,
+    color: new Color(0.05, 0.4, 0.15),
     side: DoubleSide
     // wireframe: true
   }

@@ -6,8 +6,8 @@ import {
 } from 'three'
 import { detRandGrass } from '~/utils/random'
 
-export default class GrassGeometry extends BufferGeometry {
-  constructor(count = 200) {
+export default class BushGeometry extends BufferGeometry {
+  constructor(count = 100) {
     super()
     const itemSize = 3
     const posArr = new Float32Array(count * 3 * itemSize)
@@ -21,14 +21,14 @@ export default class GrassGeometry extends BufferGeometry {
     const normalUp = new Vector3(0, 1, 0)
     const normal = new Vector3(0, 1, 0)
     const ab = new Vector3(0, 1, 0)
-    const grassScale = 1
+    const grassScale = 2
     for (let i = 0; i < count; i++) {
       const angle = detRandGrass(-Math.PI, Math.PI)
       offset.x = Math.cos(angle) * 2 * grassScale
       offset.z = Math.sin(angle) * 2 * grassScale
       const i9 = i * 9
       const polarAngle = detRandGrass(-Math.PI, Math.PI)
-      const polarDistance = detRandGrass(0, 15)
+      const polarDistance = detRandGrass(0, 12)
       // pos.set(detRandGrass(-16, 16), 0, detRandGrass(-16, 16))
       pos.set(
         Math.cos(polarAngle) * polarDistance,
