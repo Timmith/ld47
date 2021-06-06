@@ -193,3 +193,26 @@ export function pixelLengthOnScreen(a: Vector3, b: Vector3, camera: Camera) {
   b.project(camera)
   return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
 }
+
+let phi = (Math.sqrt(5) + 1) * 0.5 - 1
+let ga = phi * Math.PI * 2
+export function pointOnSphereFibonacci(
+  index: number,
+  total: number
+): [number, number] {
+  //[long, lat];
+  return [ga * index, Math.asin(-1 + (2 * index) / total)]
+}
+
+export function longLatToXYZ(
+  longLat: [number, number],
+  radius: number
+): [number, number, number] {
+  const long = longLat[0]
+  const lat = longLat[1]
+  return [
+    Math.cos(lat) * Math.cos(long) * radius,
+    Math.sin(lat) * radius,
+    Math.cos(lat) * Math.sin(long) * radius
+  ]
+}

@@ -14,9 +14,12 @@ import {
   WebGLRenderTarget
 } from 'three'
 import BushGeometry from '~/geometries/BushGeometry'
+import FibonacciSphereGeometry from '~/geometries/FibonacciSphereGeometry'
 import GrassGeometry from '~/geometries/GrassGeometry'
 import { getMaterial } from '~/helpers/materials/materialLib'
 import { getChamferedBoxGeometry } from '~/utils/geometry'
+import { longLatToXYZ, pointOnSphereFibonacci, rand, rand2 } from '~/utils/math'
+import { detRandGraphics } from '~/utils/random'
 
 // const scale = 1
 const scale = Math.SQRT2 / 2
@@ -76,6 +79,7 @@ export default class TileMaker {
     const ballMat = getMaterial('plastic')
     const grassMat = getMaterial('grass')
     const bushMat = getMaterial('bush')
+    const berryMat = getMaterial('berry')
     const woodMat = getMaterial('wood')
     const ball = new Mesh(new SphereGeometry(16, 32, 16), ballMat)
     ball.scale.y = Math.SQRT1_2
@@ -277,35 +281,81 @@ export default class TileMaker {
     scene.add(grassNW)
     grassNW.position.set(-16, 0, 16)
 
-    const bushGeoA = new BushGeometry()
-    const bushGeoH = new BushGeometry()
-    const bushGeoV = new BushGeometry()
-    const bushGeoCorner = new BushGeometry()
-    //bush
-    const bushC = new Mesh(bushGeoA, bushMat)
+    function makeRecursiveBush(
+      radius1 = 7,
+      radius2 = 4,
+      knobs = 16,
+      knobs2 = 30,
+      y = 11
+    ) {
+      const bushGeoA3 = new FibonacciSphereGeometry(2, 8)
+      //bush
+      const bushC = new Object3D()
+      const bushC2Proto = new Object3D()
+      const bushC3Proto = new Mesh(bushGeoA3, bushMat)
+
+      for (let i = 0; i < knobs2; i++) {
+        const bushC3 = bushC3Proto.clone()
+        bushC3.position.fromArray(
+          longLatToXYZ(pointOnSphereFibonacci(i, knobs2), radius2)
+        )
+        bushC2Proto.add(bushC3)
+      }
+      for (let i = 0; i < knobs; i++) {
+        const bushC2 = bushC2Proto.clone(true)
+        bushC2.position.fromArray(
+          longLatToXYZ(pointOnSphereFibonacci(i, knobs), radius1)
+        )
+        bushC.add(bushC2)
+        // bushC2.scale.multiplyScalar(rand2(0.8, 1.2))
+      }
+      bushC.traverse(obj => {
+        if (detRandGraphics() > 0.975 && obj instanceof Mesh) {
+          obj.material = berryMat
+          obj.scale.multiplyScalar(1.5)
+          obj.position.multiplyScalar(1.2)
+        }
+      })
+      bushC.rotation.set(
+        detRandGraphics(-Math.PI, Math.PI),
+        detRandGraphics(-Math.PI, Math.PI),
+        detRandGraphics(-Math.PI, Math.PI)
+      )
+      const bushBase = new Object3D()
+      bushBase.add(bushC)
+      bushBase.scale.y *= scale
+      bushC.position.y += y
+      return bushBase
+    }
+    // bushC.material.visible = false
+    const bushC = makeRecursiveBush()
+    const bushVProto = makeRecursiveBush()
+    const bushHProto = makeRecursiveBush()
+    const bushCornerProto = makeRecursiveBush(16, 8, 24, 60, 22)
     scene.add(bushC)
-    const bushN = new Mesh(bushGeoV, bushMat)
+    const bushN = bushVProto.clone(true)
     scene.add(bushN)
+    debugger
     bushN.position.set(0, 0, 16)
-    const bushNE = new Mesh(bushGeoCorner, bushMat)
+    const bushNE = bushCornerProto.clone(true)
     scene.add(bushNE)
     bushNE.position.set(16, 0, 16)
-    const bushE = new Mesh(bushGeoH, bushMat)
+    const bushE = bushHProto.clone(true)
     scene.add(bushE)
     bushE.position.set(16, 0, 0)
-    const bushSE = new Mesh(bushGeoCorner, bushMat)
+    const bushSE = bushNE.clone(true)
     scene.add(bushSE)
     bushSE.position.set(16, 0, -16)
-    const bushS = new Mesh(bushGeoV, bushMat)
+    const bushS = bushN.clone(true)
     scene.add(bushS)
     bushS.position.set(0, 0, -16)
-    const bushSW = new Mesh(bushGeoCorner, bushMat)
+    const bushSW = bushNE.clone(true)
     scene.add(bushSW)
     bushSW.position.set(-16, 0, -16)
-    const bushW = new Mesh(bushGeoH, bushMat)
+    const bushW = bushHProto.clone(true)
     scene.add(bushW)
     bushW.position.set(-16, 0, 0)
-    const bushNW = new Mesh(bushGeoCorner, bushMat)
+    const bushNW = bushNE.clone(true)
     scene.add(bushNW)
     bushNW.position.set(-16, 0, 16)
 
