@@ -22,6 +22,28 @@ export function getTempTexture() {
   return __tempTexture!
 }
 
+const __randomTexture = new Map<string, DataTexture>()
+export function getRandomTexture(width = 64, height = 64) {
+  const resHash = `${width}x${height}`
+  if (!__randomTexture.has(resHash)) {
+    const total = width * height * 4
+    const data = new Uint8Array(total)
+    for (let i = 0; i < total; i++) {
+      data[i] = ~~(Math.random() * 256)
+    }
+    const texture = new DataTexture(
+      data,
+      width,
+      height,
+      RGBAFormat,
+      UnsignedByteType
+    )
+    texture.needsUpdate = true
+    __randomTexture.set(resHash, texture)
+  }
+  return __randomTexture.get(resHash)!
+}
+
 export async function loadPixelatedTexture(path: string, flipY = true) {
   return new Promise<Texture>(resolve => {
     const loader = new TextureLoader()

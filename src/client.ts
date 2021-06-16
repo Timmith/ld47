@@ -1,26 +1,10 @@
 import { Clock, Color, Vector3 } from 'three'
-import TestPhysicsTileMapPNGScene from '~/helpers/scenes/TestPhysicsTileMapPNG'
-import TestSpritesOnTileMapScene from '~/helpers/scenes/TestSpritesOnTileMapScene'
-import TestTileMapScene from '~/helpers/scenes/TestTileMapScene'
 
 import { simpleTweener } from './animation/tweeners'
 import { BaseTestScene } from './helpers/scenes/BaseTestScene'
-import TestCharacterControlScene from './helpers/scenes/TestCharacterControl'
-import TestCharacterControlOnTextScene from './helpers/scenes/TestCharacterControlOnText'
-import TestGraphicsCharacterScene from './helpers/scenes/TestGraphicsCharacter'
-import TestGraphicsLevelScene from './helpers/scenes/TestGraphicsLevel'
-import TestJitTilesScene from './helpers/scenes/TestJitTilesScene'
-import TestKeyboardCharacterScene from './helpers/scenes/TestKeyboardCharacter'
-import TestKeyboardInputScene from './helpers/scenes/TestKeyboardInput'
 import TestLightingScene from './helpers/scenes/TestLighting'
-import TestPhysicsScene from './helpers/scenes/TestPhysics'
-import TestPhysicsCharacterScene from './helpers/scenes/TestPhysicsCharacter'
-import TestPhysicsConcaveBodiesScene from './helpers/scenes/TestPhysicsConcaveBodies'
-import TestPhysicsPNGScene from './helpers/scenes/TestPhysicsPNG'
-import TestStencilsScene from './helpers/scenes/TestStencils'
-import TestTextScene from './helpers/scenes/TestText'
-import TestTextPhysicsScene from './helpers/scenes/TestTextPhysics'
 import renderer from './renderer'
+import { testClasses } from './tests'
 import { timeUniform } from './uniforms'
 import { cameraShaker } from './utils/cameraShaker'
 import { getUrlParam } from './utils/location'
@@ -35,27 +19,6 @@ renderer.setClearColor(new Color(0x344556), 1.0)
 cameraShaker.camera.position.set(0, 0.5, 0.5)
 cameraShaker.camera.lookAt(new Vector3())
 
-const testClasses: { [K: string]: any } = {
-  characterControl: TestCharacterControlScene,
-  characterControlOnText: TestCharacterControlOnTextScene,
-  graphicsLevel: TestGraphicsLevelScene,
-  graphicsCharacter: TestGraphicsCharacterScene,
-  keyboard: TestKeyboardInputScene,
-  keyboardCharacter: TestKeyboardCharacterScene,
-  lighting: TestLightingScene,
-  physics: TestPhysicsScene,
-  textPhysics: TestTextPhysicsScene,
-  physicsConcave: TestPhysicsConcaveBodiesScene,
-  physicsCharacter: TestPhysicsCharacterScene,
-  physicsTileMapPNG: TestPhysicsTileMapPNGScene,
-  physicsPNG: TestPhysicsPNGScene,
-  stencils: TestStencilsScene,
-  text: TestTextScene,
-  tileMap: TestTileMapScene,
-  spritesOnTileMap: TestSpritesOnTileMapScene,
-  jitTiles: TestJitTilesScene
-}
-
 let TestClass: new () => BaseTestScene = TestLightingScene
 const testParam = getUrlParam('test') || 'graphicsCharacter'
 if (testClasses.hasOwnProperty(testParam)) {
@@ -64,7 +27,14 @@ if (testClasses.hasOwnProperty(testParam)) {
 
 const test: BaseTestScene = new TestClass()
 
+const nthFrame: number = parseInt(getUrlParam('nthFrame') || '1')
+let frameCounter = 0
 const loop = () => {
+  frameCounter++
+  if (frameCounter % nthFrame !== 0) {
+    requestAnimationFrame(loop)
+    return
+  }
   const dt = Math.min(clock.getDelta(), 0.1) * simpleTweener.speed
 
   nextFrameUpdate()

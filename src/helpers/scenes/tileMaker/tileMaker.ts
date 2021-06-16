@@ -335,7 +335,6 @@ export default class TileMaker {
     scene.add(bushC)
     const bushN = bushVProto.clone(true)
     scene.add(bushN)
-    debugger
     bushN.position.set(0, 0, 16)
     const bushNE = bushCornerProto.clone(true)
     scene.add(bushNE)
