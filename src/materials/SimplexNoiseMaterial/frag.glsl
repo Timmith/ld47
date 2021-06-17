@@ -11,6 +11,7 @@
 
 precision lowp float;
 
+uniform vec3 uColor;
 varying vec2 vUv;
 
 
@@ -63,5 +64,5 @@ void main() {
   f = min(1.0, max(0.0, f * 10.0));
 	// f = 0.5 + 0.5*f;
 	
-	gl_FragColor = vec4( f, f, f, 1.0 );
+	gl_FragColor = vec4( vec3(f) * uColor, 1.0 );
 }

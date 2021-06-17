@@ -1,7 +1,6 @@
 import {
   BufferGeometry,
   Camera,
-  Geometry,
   Group,
   Material,
   Mesh,

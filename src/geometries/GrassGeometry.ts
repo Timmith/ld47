@@ -61,9 +61,9 @@ export default class GrassGeometry extends BufferGeometry {
       indexArr[i] = i
     }
     const posAttr = new Float32BufferAttribute(posArr, itemSize)
-    this.addAttribute('position', posAttr, itemSize)
+    this.setAttribute('position', posAttr)
     const normalAttr = new Float32BufferAttribute(normalArr, itemSize)
-    this.addAttribute('normal', normalAttr, itemSize)
+    this.setAttribute('normal', normalAttr)
     const index = new Uint16BufferAttribute(indexArr, 1)
     this.setIndex(index)
   }

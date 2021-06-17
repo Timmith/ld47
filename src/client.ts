@@ -29,13 +29,11 @@ const test: BaseTestScene = new TestClass()
 
 const nthFrame: number = parseInt(getUrlParam('nthFrame') || '1')
 let frameCounter = 0
+let renderDt = 0
 const loop = () => {
   frameCounter++
-  if (frameCounter % nthFrame !== 0) {
-    requestAnimationFrame(loop)
-    return
-  }
   const dt = Math.min(clock.getDelta(), 0.1) * simpleTweener.speed
+  renderDt += dt
 
   nextFrameUpdate()
   simpleTweener.rafTick()
@@ -44,7 +42,12 @@ const loop = () => {
   timeUniform.value += dt
 
   test.update(dt)
-  test.render(renderer, dt)
+  if (frameCounter % nthFrame !== 0) {
+    requestAnimationFrame(loop)
+    return
+  }
+  test.render(renderer, renderDt)
+  renderDt = 0
 
   requestAnimationFrame(loop)
 }

@@ -1,32 +1,33 @@
-import { Color, DoubleSide, RawShaderMaterial, Uniform, Vector4 } from 'three'
+import { DoubleSide, RawShaderMaterial, Texture, Uniform, Vector4 } from 'three'
 import { buildParameters } from '~/utils/jsUtils'
+import { getTempTexture } from '~/utils/threeUtils'
 
 import fragmentShader from './frag.glsl'
 import vertexShader from './vert.glsl'
 
 interface Parameters {
   uvST: Vector4
-  color: Color
+  texture: Texture
 }
 
 const __defaultParams: Parameters = {
-  uvST: new Vector4(0.2, 0.2, 0, 0),
-  color: new Color(1, 1, 0)
+  uvST: new Vector4(1, 1, 0, 0),
+  texture: getTempTexture()
 }
 
 interface Uniforms {
   uUvST: { value: Vector4 }
-  uColor: { value: Color }
+  uTexture: { value: Texture }
 }
 
-export class SimplexNoiseMaterial extends RawShaderMaterial {
+export class BasicTextureMaterial extends RawShaderMaterial {
   constructor(options: Partial<Parameters> = {}) {
     const params = buildParameters(__defaultParams, options)
     const uUvST = new Uniform(params.uvST)
-    const uColor = new Uniform(params.color)
+    const uTexture = new Uniform(params.texture)
     const uniforms: Uniforms = {
       uUvST,
-      uColor
+      uTexture
     }
     const defines: { [key: string]: boolean | string | number } = {}
 

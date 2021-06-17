@@ -3,8 +3,8 @@ import {
   BufferGeometry,
   Camera,
   Color,
-  Geometry,
   Group,
+  IUniform,
   Material,
   Matrix4,
   Mesh,
@@ -251,7 +251,7 @@ export default class TextMesh extends Mesh {
     renderer: WebGLRenderer,
     scene: Scene,
     camera: Camera,
-    geometry: Geometry | BufferGeometry,
+    geometry: BufferGeometry,
     material: Material,
     group: Group
   ) => {
@@ -329,7 +329,7 @@ export default class TextMesh extends Mesh {
   }
 
   private updateMeasurements() {
-    const bb = this.geometry.boundingBox
+    const bb = this.geometry.boundingBox!
     this.width = bb.max.x - bb.min.x
     this.height = Math.abs(bb.max.y - bb.min.y)
     this.userData.resolution = new Vector2(this.width, this.height)
@@ -346,8 +346,8 @@ interface MSDFShaderUniforms {
   strokeBias: { value: number }
   strokeColor: { value: Color }
   opacity: { value: number }
-  clipSpacePosition?: Uniform
-  pixelSizeInClipSpace?: Uniform
+  clipSpacePosition?: IUniform
+  pixelSizeInClipSpace?: IUniform
   offset?: Uniform
   prescale?: Uniform
 }
@@ -514,7 +514,7 @@ const createTextGeometry = (
   const y = settings.bakedOffset ? settings.bakedOffset.y : 0
 
   geometry.computeBoundingBox()
-  const bb = geometry.boundingBox
+  const bb = geometry.boundingBox!
   if (settings.width) {
     const layoutWidth = geometry.layout.width
     bb.max.x = layoutWidth - bb.min.x

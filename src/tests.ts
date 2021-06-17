@@ -2,6 +2,7 @@ import TestPhysicsTileMapPNGScene from '~/helpers/scenes/TestPhysicsTileMapPNG'
 import TestSpritesOnTileMapScene from '~/helpers/scenes/TestSpritesOnTileMapScene'
 import TestTileMapScene from '~/helpers/scenes/TestTileMapScene'
 
+import TestCachedScrollingNoiseViewShaderScene from './helpers/scenes/TestCachedScrollingNoiseViewShaderScene'
 import TestCharacterControlScene from './helpers/scenes/TestCharacterControl'
 import TestCharacterControlOnTextScene from './helpers/scenes/TestCharacterControlOnText'
 import TestGraphicsCharacterScene from './helpers/scenes/TestGraphicsCharacter'
@@ -40,5 +41,6 @@ export const testClasses: { [K: string]: any } = {
   spritesOnTileMap: TestSpritesOnTileMapScene,
   jitTiles: TestJitTilesScene,
   noiseShader: TestNoiseShaderScene,
+  cachedScrollingNoiseViewShader: TestCachedScrollingNoiseViewShaderScene,
   tileViewBuffer: TestTileViewBufferScene
 }

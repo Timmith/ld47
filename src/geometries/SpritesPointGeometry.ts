@@ -25,7 +25,7 @@ export default class SpritesPointGeometry extends BufferGeometry {
       false
     )
     this.xyFrameAttr = xyFrameAttr
-    this.addAttribute('xyFrame', xyFrameAttr, partsPerItem)
+    this.setAttribute('xyFrame', xyFrameAttr)
 
     const idArray = new Float32Array(total)
 
@@ -34,7 +34,7 @@ export default class SpritesPointGeometry extends BufferGeometry {
     }
     const idAttr = new Float32BufferAttribute(idArray, 1, false)
     this.idAttr = idAttr
-    this.addAttribute('id', idAttr, 1)
+    this.setAttribute('id', idAttr)
 
     const indices = new Uint16Array(total)
     for (let i = 0; i < total; i++) {

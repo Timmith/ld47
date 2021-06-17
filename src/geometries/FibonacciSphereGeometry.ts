@@ -1,14 +1,14 @@
 import triangulate from 'delaunay-triangulate'
-import { Face3, Geometry, Vector3 } from 'three'
+import { BufferAttribute, BufferGeometry, Vector3 } from 'three'
 import { pointOnSphereFibonacci } from '~/utils/math'
 
-export default class FibonacciSphereGeometry extends Geometry {
-  constructor(radius: number, total: number, elongatedTarget?: boolean) {
+export default class FibonacciSphereGeometry extends BufferGeometry {
+  constructor(radius: number, total: number) {
     super()
     radius = radius !== undefined ? radius : 20
     total = total !== undefined ? total : 20
     const verticeArrays = []
-    const vertices = this.vertices
+    const vertices = []
     let i, hash, uniqueIndex
     for (i = 0; i < total; i++) {
       const longLat = pointOnSphereFibonacci(i, total)
@@ -52,6 +52,7 @@ export default class FibonacciSphereGeometry extends Geometry {
       }
       counts[uniqueIndex]++
     }
+    const indices: number[] = []
     for (i = 0; i < triangles.length; i += 3) {
       tempTri[0] = triangles[i]
       tempTri[1] = triangles[i + 1]
@@ -60,31 +61,26 @@ export default class FibonacciSphereGeometry extends Geometry {
       hash = tempTri[0] + ',' + tempTri[1] + ',' + tempTri[2]
       uniqueIndex = uniques.indexOf(hash)
       if (counts[uniqueIndex] === 1) {
-        const face = new Face3(triangles[i], triangles[i + 1], triangles[i + 2])
-        this.faces.push(face)
+        indices.push(triangles[i])
+        indices.push(triangles[i + 1])
+        indices.push(triangles[i + 2])
+        // const face = new Face3(triangles[i], triangles[i + 1], triangles[i + 2])
+        // this.faces.push(face)
       }
     }
-    this.computeFaceNormals()
+    const positionArray = new Float32Array(verticeArrays.length * 3)
+    for (let i = 0; i < verticeArrays.length; i++) {
+      const i3 = i * 3
+      const vertArr = verticeArrays[i]
+      positionArray[i3] = vertArr[0]
+      positionArray[i3 + 1] = vertArr[1]
+      positionArray[i3 + 2] = vertArr[2]
+    }
+    this.setAttribute('position', new BufferAttribute(positionArray, 3))
+    this.setIndex(indices)
+    // this.computeFaceNormals()
     this.computeVertexNormals()
     // this.computeTangents();
-
-    if (elongatedTarget) {
-      const vertices2: Vector3[] = []
-      this.vertices.forEach(function(v) {
-        if (v.y > 0) {
-          v.multiplyScalar(0.8)
-          v.y += 1
-        }
-        const v2 = v.clone()
-        if (v2.y < 0) {
-          v2.y = 0
-        } else {
-          v2.y = 1
-        }
-        vertices2.push(v2)
-      })
-      this.morphTargets.push({ name: 'target', vertices: vertices2 })
-    }
   }
 }
 

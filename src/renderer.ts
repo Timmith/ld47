@@ -1,4 +1,4 @@
-import { PCFShadowMap, WebGLRenderer } from 'three'
+import { PCFShadowMap, sRGBEncoding, WebGLRenderer } from 'three'
 import { RESET_USER_SETTINGS_TO_DEFAULTS } from '~/constants'
 
 import device from './device'
@@ -27,12 +27,16 @@ const attributeValues: string[] = [
 ]
 
 attributeValues.forEach(v => {
-  renderer.context.canvas.style.setProperty('image-rendering', v)
+  const canvas = renderer.getContext().canvas
+  if (canvas instanceof HTMLCanvasElement) {
+    canvas.style.setProperty('image-rendering', v)
+  }
 })
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = PCFShadowMap
-renderer.gammaOutput = true
-renderer.gammaFactor = 2.2
+renderer.outputEncoding = sRGBEncoding
+// renderer.gammaOutput = true
+// renderer.gammaFactor = 2.2
 renderer.autoClear = false
 
 const downsample = new NiceParameter(

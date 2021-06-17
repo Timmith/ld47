@@ -113,4 +113,3 @@ export type KeyboardCodes =
   | 'Numpad4'
   | 'Numpad7'
   | 'NumLock'
-  | undefined

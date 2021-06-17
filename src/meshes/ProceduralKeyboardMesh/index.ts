@@ -11,7 +11,7 @@ class KeyInfo {
   constructor(
     public label: string,
     public width: number,
-    public eventCode: KeyboardCodes
+    public eventCode?: KeyboardCodes
   ) {
     this.width *= KEY_SCALE
     //
@@ -19,7 +19,7 @@ class KeyInfo {
 }
 class KeySpace extends KeyInfo {
   constructor(width: number) {
-    super('', width, undefined)
+    super('', width)
   }
 }
 

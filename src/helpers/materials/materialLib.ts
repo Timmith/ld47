@@ -22,15 +22,15 @@ export const standardMaterialParamLib: {
 } = {
   ground: {
     roughness: 1,
-    color: new Color(0.06, 0.04, 0.03)
+    color: new Color(0.16, 0.14, 0.13)
   },
   brick: {
     roughness: 1,
-    color: new Color(0.3, 0.11, 0.1)
+    color: new Color(0.5, 0.2, 0.15)
   },
   mortar: {
     roughness: 1,
-    color: new Color(0.1, 0.1, 0.1)
+    color: new Color(0.2, 0.2, 0.2)
   },
   drywall: {
     roughness: 1,
@@ -38,11 +38,11 @@ export const standardMaterialParamLib: {
   },
   floor: {
     roughness: 1,
-    color: new Color(0.3, 0.25, 0.2)
+    color: new Color(0.4, 0.32, 0.25)
   },
   wood: {
     roughness: 1,
-    color: new Color(0.4, 0.3, 0.2)
+    color: new Color(0.6, 0.4, 0.3)
   },
   plastic: {
     roughness: 0.5,
@@ -50,19 +50,19 @@ export const standardMaterialParamLib: {
   },
   grass: {
     roughness: 0.75,
-    color: new Color(0.1, 0.6, 0.1),
+    color: new Color(0.3, 0.75, 0.3),
     side: DoubleSide
     // wireframe: true
   },
   bush: {
     roughness: 0.6,
-    color: new Color(0.025, 0.1, 0.025),
+    color: new Color(0.125, 0.2, 0.125),
     side: DoubleSide
     // wireframe: true
   },
   berry: {
     roughness: 0.5,
-    color: new Color(0.4, 0.05, 0.125),
+    color: new Color(0.6, 0.15, 0.225),
     side: DoubleSide
     // wireframe: true
   }
